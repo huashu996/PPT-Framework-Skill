@@ -11,7 +11,8 @@ param(
     [double]$Width = 120,
     [double]$Height = 36,
     [int]$ExpectedCount = -1,
-    [switch]$Replace
+    [switch]$Replace,
+    [switch]$RequireAvailable
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,6 +30,16 @@ function Get-RegistryDefaultValue {
 }
 
 function Get-MathTypeRegistration {
+    if ($env:OS -ne 'Windows_NT') {
+        return [pscustomobject]@{
+            Available = $false
+            ProgId = $MathTypeProgId
+            Description = $null
+            Clsid = $null
+            Executable = $null
+        }
+    }
+
     $progIdPath = "Registry::HKEY_CLASSES_ROOT\$MathTypeProgId"
     $clsid = Get-RegistryDefaultValue "$progIdPath\CLSID"
     $server = $null
@@ -48,24 +59,71 @@ function Get-MathTypeRegistration {
         }
     }
 
-    if (-not $exePath) {
-        foreach ($candidate in @(
-            'C:\Program Files (x86)\MathType\MathType.exe',
-            'C:\Program Files\MathType\MathType.exe'
-        )) {
-            if (Test-Path -LiteralPath $candidate) {
-                $exePath = $candidate
-                break
-            }
-        }
-    }
-
     [pscustomobject]@{
-        Available = [bool]($clsid -and $exePath -and (Test-Path -LiteralPath $exePath))
+        Available = [bool]$clsid
         ProgId = $MathTypeProgId
         Description = Get-RegistryDefaultValue $progIdPath
         Clsid = $clsid
         Executable = $exePath
+    }
+}
+
+function Get-PowerPointMathTypeCapability {
+    $items = @()
+    $pptProbe = $null
+    $desktopPowerPoint = $false
+    $errorMessage = $null
+
+    if ($env:OS -ne 'Windows_NT') {
+        return [pscustomobject]@{
+            DesktopPowerPoint = $false
+            RibbonAddInAvailable = $false
+            AddIns = @()
+            Error = 'PowerPoint desktop automation requires Windows.'
+        }
+    }
+
+    try {
+        $pptProbe = New-Object -ComObject PowerPoint.Application
+        $desktopPowerPoint = $true
+        foreach ($addIn in $pptProbe.COMAddIns) {
+            $description = [string]$addIn.Description
+            $progId = [string]$addIn.ProgId
+            if ("$description $progId" -match '(?i)MathType|Design Science|WIRIS') {
+                $items += [pscustomobject]@{
+                    Kind = 'COMAddIn'
+                    Name = $description
+                    ProgId = $progId
+                    Connected = [bool]$addIn.Connect
+                }
+            }
+        }
+        foreach ($addIn in $pptProbe.AddIns) {
+            $name = [string]$addIn.Name
+            $fullName = [string]$addIn.FullName
+            if ("$name $fullName" -match '(?i)MathType|Design Science|WIRIS') {
+                $items += [pscustomobject]@{
+                    Kind = 'PowerPointAddIn'
+                    Name = $name
+                    Path = $fullName
+                    Loaded = [bool]$addIn.Loaded
+                }
+            }
+        }
+    } catch {
+        $errorMessage = $_.Exception.Message
+    } finally {
+        if ($pptProbe) {
+            try { $pptProbe.Quit() } catch {}
+            try { [void][System.Runtime.InteropServices.Marshal]::FinalReleaseComObject($pptProbe) } catch {}
+        }
+    }
+
+    [pscustomobject]@{
+        DesktopPowerPoint = $desktopPowerPoint
+        RibbonAddInAvailable = [bool]($items.Count -gt 0)
+        AddIns = @($items)
+        Error = $errorMessage
     }
 }
 
@@ -127,20 +185,30 @@ function Get-UniqueMathShapeName {
 }
 
 $registration = Get-MathTypeRegistration
+$capability = Get-PowerPointMathTypeCapability
 if ($Action -eq 'detect') {
+    $available = [bool](
+        $capability.DesktopPowerPoint -and
+        ($capability.RibbonAddInAvailable -or $registration.Available)
+    )
     Write-JsonResult ([pscustomobject]@{
         Action = 'detect'
-        Success = $registration.Available
+        Success = $available
+        PreferredEntry = if ($capability.RibbonAddInAvailable) { 'PowerPoint MathType ribbon' } elseif ($registration.Available) { 'Direct OLE compatibility' } else { $null }
+        PowerPoint = $capability
         MathType = $registration
     })
-    if (-not $registration.Available) {
-        throw "MathType OLE server '$MathTypeProgId' is not available."
+    if ($RequireAvailable -and -not $available) {
+        throw 'Neither the PowerPoint MathType add-in nor the MathType OLE compatibility interface is available.'
     }
     return
 }
 
-if (-not $registration.Available) {
-    throw "MathType OLE server '$MathTypeProgId' is not available. Run -Action detect first."
+if (-not $capability.DesktopPowerPoint) {
+    throw 'Desktop PowerPoint automation is unavailable. Run -Action detect for details.'
+}
+if (($Action -eq 'insert' -or $Action -eq 'edit') -and -not $registration.Available) {
+    throw "Direct OLE compatibility requires registered ProgID '$MathTypeProgId'. Use the PowerPoint MathType ribbon instead."
 }
 
 $resolvedPptPath = Resolve-PresentationPath

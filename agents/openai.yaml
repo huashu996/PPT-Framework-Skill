@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper-Fig-Skill"
   short_description: "Build balanced academic figures with native PPT geometry"
-  default_prompt: "Use $paper-fig-skill to confirm the canvas, font ranges, and MathType choice; call its bundled MathType-PowerPoint tool when selected; map the complete system and route logic; jointly lay out all content without overlap; then add native connectors and refine the same editable PowerPoint."
+  default_prompt: "Use $paper-fig-skill to run its portable capability preflight; confirm the canvas, font ranges, and MathType choice; enter MathType through its PowerPoint ribbon plugin, resolving optional resources relative to SKILL.md or creating the documented temporary validation adapter; map the complete system and route logic; jointly lay out all content without overlap; then add native connectors and refine the same editable PowerPoint."

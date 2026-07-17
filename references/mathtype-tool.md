@@ -1,37 +1,52 @@
-# MathType PowerPoint tool
+# Portable MathType PowerPoint workflow
 
-Use `scripts/mathtype-ppt.ps1` when the confirmed formula contract selects MathType. The tool links PowerPoint directly to the installed MathType OLE server and uses the registered `Equation.DSMT4` object type.
+Use the MathType plugin in the PowerPoint ribbon when the confirmed formula contract selects MathType. This is the primary insertion and editing route. Use `scripts/mathtype-ppt.ps1` for capability reporting, saved-object inspection, validation, and direct-OLE compatibility only.
 
-## Fixed integration interface
+Resolve every helper relative to the selected `SKILL.md`. A missing helper is an incomplete-package warning, not evidence that MathType itself is absent.
 
-Treat this interface as authoritative. Do not search for the MathType interface again unless `-Action detect` reports that registration is missing:
+## Primary PowerPoint ribbon workflow
+
+1. Open the authoritative PPT in desktop PowerPoint.
+2. Navigate to the target slide and select the reserved formula location or an existing equation.
+3. Enter through the MathType tab in the PowerPoint ribbon and choose the appropriate new-equation or edit-equation command.
+4. Enter the formula in the MathType editor, then return to PowerPoint.
+5. Place the equation inside its reserved rectangle and assign a stable `MATH_*` name when object control permits.
+6. Save, close, and reopen the deck.
+7. Select the equation and use the MathType ribbon edit command again. This round-trip is the definitive editability check.
+
+Use desktop UI automation when unattended entry is required. Do not launch a machine-specific `MathType.exe` path and do not substitute a screenshot.
+
+## Capability and compatibility interface
+
+Detect the PowerPoint plugin by enumerating `PowerPoint.Application.COMAddIns` and `PowerPoint.Application.AddIns`. Match MathType, Design Science, or WIRIS in the add-in name, description, path, or ProgID, and record its connected or loaded state. If enumeration is inconclusive, visually check the PowerPoint ribbon.
+
+MathType ribbon insertions commonly expose this legacy editable OLE interface. Use it for compatibility and validation when present, but do not require it before checking the ribbon plugin:
 
 - OLE ProgID: `Equation.DSMT4`
 - Registered description: `MathType 7.0 Equation`
 - CLSID: `{0002CE03-0000-0000-C000-000000000046}`
-- PowerPoint insertion call: `Shapes.AddOLEObject(left, top, width, height, 'Equation.DSMT4')`
-- PowerPoint editing call: `shape.OLEFormat.DoVerb(2)` where verb 2 is `Edit`
-- Required saved-object check: `shape.OLEFormat.ProgID -eq 'Equation.DSMT4'`
+- Compatibility insertion: `Shapes.AddOLEObject(left, top, width, height, 'Equation.DSMT4')`
+- Compatibility editing: `shape.OLEFormat.DoVerb(2)`
+- Saved-object check: `shape.OLEFormat.ProgID -eq 'Equation.DSMT4'`
 
-The bundled tool resolves the MathType executable from the OLE registration. Do not hard-code or rediscover the executable path in ordinary figure work.
+Do not hard-code an executable path, username, drive letter, Codex home, or repository checkout. If the bundled helper is missing, create the temporary build-directory adapter defined in the main `SKILL.md`.
 
-## Required sequence
+## Portable helper invocation
 
-1. Detect MathType before constructing formulas.
-2. Reserve each formula's occupied rectangle during joint layout.
-3. Insert one named MathType OLE object into each reserved rectangle.
-4. Open the named object with the OLE `Edit` verb.
-5. In the MathType editor, select the equation body, enter or paste the intended formula, and return to PowerPoint so the embedded object updates.
-6. Save the PowerPoint.
-7. Reopen the saved PowerPoint and inspect or validate the MathType objects.
-
-Run commands from PowerShell:
+Replace the placeholder with the actual directory containing the selected `SKILL.md`:
 
 ```powershell
-$tool = 'C:\Users\18144\.codex\skills\paper-fig-skill\scripts\mathtype-ppt.ps1'
+$skillRoot = '<directory containing the selected SKILL.md>'
+$tool = Join-Path $skillRoot 'scripts\mathtype-ppt.ps1'
 
 & $tool -Action detect
+& $tool -Action inspect -PptPath 'C:\path\figure.pptx'
+& $tool -Action validate -PptPath 'C:\path\figure.pptx' -ExpectedCount 1
+```
 
+Use `-Action insert` and `-Action edit` only as direct-OLE compatibility routes when the PowerPoint ribbon cannot be operated and `Equation.DSMT4` is registered:
+
+```powershell
 & $tool -Action insert `
   -PptPath 'C:\path\figure.pptx' `
   -SlideNumber 1 `
@@ -42,28 +57,8 @@ $tool = 'C:\Users\18144\.codex\skills\paper-fig-skill\scripts\mathtype-ppt.ps1'
   -PptPath 'C:\path\figure.pptx' `
   -SlideNumber 1 `
   -ShapeName 'MATH_Loss'
-
-& $tool -Action inspect -PptPath 'C:\path\figure.pptx'
-
-& $tool -Action validate `
-  -PptPath 'C:\path\figure.pptx' `
-  -ExpectedCount 1
 ```
 
-PowerPoint coordinates and sizes are in points. Use stable `MATH_*` shape names. `insert` creates a genuine editable MathType OLE object; it does not create a screenshot. `edit` opens the selected object through its MathType `Edit` verb and intentionally leaves the presentation open for interactive or UI-automated formula entry.
+The MathType editor does not expose a universally reliable text-setting COM property. Do not pretend that assigning ordinary PowerPoint text populates the equation. Enter formula content through the editor opened from the PowerPoint ribbon.
 
-The legacy MathType OLE server does not expose a reliable text-setting COM property. Do not pretend that assigning a PowerPoint text string populates the equation. Enter formula content through the opened MathType editor, then use `validate` to verify the saved object type, count, dimensions, and slide bounds.
-
-## Formula-writing lifecycle
-
-For every formula, use this exact lifecycle:
-
-1. Assign a stable semantic name such as `MATH_FinalAttention` and reserve its final layout rectangle.
-2. Call `insert` once. Never replace the object with an image after it exists.
-3. Call `edit` for that name. Use the visible MathType editor for manual or UI-automated content entry.
-4. Return focus to PowerPoint and confirm the rendered formula changed inside the same named object.
-5. Resize or reposition the existing OLE shape only after the formula content is final; preserve its aspect ratio unless the reference requires a controlled adjustment.
-6. Save, close, reopen, and call `inspect`.
-7. Call `validate` with the expected total object count. Also validate important formula names individually when omissions would be hard to notice.
-
-Reject the result if copying from MathType produced only an enhanced metafile, picture, or ordinary text object. A formula is accepted as MathType-editable only when reopening the PPT still reports `OLEFormat.ProgID = Equation.DSMT4`.
+Reject the result if insertion produced only an enhanced metafile, picture, or ordinary text object. Accept a formula as MathType-editable only when it reopens successfully through the MathType ribbon; when an OLE ProgID is exposed, also require `OLEFormat.ProgID = Equation.DSMT4`.

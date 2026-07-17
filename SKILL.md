@@ -7,13 +7,29 @@ description: Create publication-ready, layout-first and symmetry-aware academic 
 
 Turn research evidence and framework materials into a complete academic figure. Preserve the research content while improving hierarchy, visual balance, and editability.
 
+## Run the portable capability preflight
+
+Resolve the skill root from the directory containing the selected `SKILL.md`. Never hard-code a username, drive letter, Codex home, repository checkout, or installation path.
+
+Treat `references/`, `scripts/`, and `agents/` as optional enhancements. Their absence indicates a partial installation, not loss of the core skill and not proof that MathType is unavailable. Continue with the self-contained workflow in this file.
+
+Before the intake gate:
+
+1. Record the operating system and available presentation-writing surface.
+2. If `scripts/portable-preflight.py` exists and Python is available, run it with `--skill-root <directory-containing-SKILL.md>` and retain its JSON report.
+3. Otherwise open desktop PowerPoint and check whether a visible MathType ribbon tab or a MathType/Design Science/WIRIS PowerPoint add-in is loaded. Also record whether the MathType OLE ProgID `Equation.DSMT4` is registered.
+4. When MathType is requested and its PowerPoint ribbon plugin is present, enter through that ribbon. Use direct OLE creation only as a compatibility route when the ribbon cannot be operated. Use Office-native editable equations or grouped editable math text only as an explicitly authorized fallback.
+5. Do not stop merely because an optional directory or helper script is missing. If only `SKILL.md` is present, create the small MathType adapter described below in the task build directory and continue.
+
+The minimum viable workflow is fully defined in this file: intake, layout reconstruction, editable shape construction, MathType integration, connector routing, visual QA, and delivery.
+
 ## Run the always-confirm intake gate
 
 At the start of every invocation, send one compact confirmation message. Prefill known values, but explicitly ask the user to confirm these decisions every time because they control the entire layout:
 
 1. Intended use and exact master/canvas: page or slide size, orientation, usable margins, and any required aspect ratio.
 2. Typography contract: Chinese and Latin fonts, permitted size range, exact number of size levels, and whether mixed-script runs may use different fonts.
-3. Formula contract: whether formulas must use editable MathType OLE objects, Office-native editable equations, or grouped editable text; confirm the formula size range separately when it differs from ordinary text.
+3. Formula contract: whether formulas must use editable MathType OLE objects, Office-native editable equations, or grouped editable text; confirm the formula size range separately when it differs from ordinary text and record whether fallback is allowed.
 4. Content-editing boundary: preserve wording verbatim or allow shortening, rephrasing, line balancing, and removal of decorative icons.
 5. Visual contract: exact reference reproduction or optimized adaptation, color/style preference, and whether apparent symmetry and orientation must be preserved.
 6. Output contract: editable PPT, high-resolution PNG, Word version, and any explicitly allowed rasterized exceptions.
@@ -24,7 +40,7 @@ Also ask for missing materials, the target framework/chapter/study, reference fi
 
 Execute these stages in order. Treat every stage as a hard gate: do not start a later stage until the current stage has a recorded, internally consistent result. Do not fill provisional boxes with text and stretch the finished diagram afterward.
 
-1. **Confirm the generation contract.** Confirm the master, usable margins, fonts, ordinary text size range, formula technology, formula size range, content-editing boundary, visual fidelity, and outputs. Stop before construction if MathType use or either size range is unknown.
+1. **Confirm the generation contract.** Confirm the master, usable margins, fonts, ordinary text size range, formula technology, formula size range, content-editing boundary, visual fidelity, and outputs. Stop before construction if MathType use or either size range is unknown. Do not confuse a missing optional skill file with an unavailable installed MathType application.
 2. **Understand the complete system and route logic.** Read the supplied images and text together. Identify the central problem, modules, submodules, hierarchy, inputs, outputs, semantic peer groups, and reading order. Create a route ledger before drawing: for every visible or implied flow, record the source, destination, direction, arrowhead end, straight/elbow/curve/branch type, junction behavior, anchor side, line weight, solid/dashed style, and z-order. Distinguish a shared bus, a merge node, and several independent arrows. Do not infer a connection from visual proximity. Do not proceed until every source and destination is accounted for.
 3. **Lock content geometry before container geometry.** Set the confirmed PPT master and usable figure bounds. Lock the exact wording, formulas, fonts, size levels, wrapping, symbols, pictures, and icons. Render or probe the final text and formulas at their real sizes; decide their occupied rectangles and intended positions. Add internal padding and only then derive text boxes, formula boxes, module boxes, system panels, and the complete figure bounds. Never fix a box first and shrink or crowd its content afterward.
 4. **Classify each whole visual object.** Inventory every non-text element as one of: native editable PowerPoint shape/connector, editable equation object, tightly cropped source raster, or newly generated local raster. Prefer one native PowerPoint primitive for a simple semantic object. Preserve the aspect ratio and safe crop of raster assets. Record stacking before construction. Split an object only for a true branch, independently attached endpoints, or geometry no single native object can express.
@@ -34,22 +50,30 @@ Execute these stages in order. Treat every stage as a hard gate: do not start a 
 
 Maintain three explicit working records through the workflow: the route ledger, the object/asset inventory, and the occupied-rectangle layout map. If a later correction invalidates one record, update it before changing the PowerPoint.
 
-## Use the bundled MathType tool
+## Use MathType on every compatible computer
 
-When the confirmed formula contract selects MathType, read [references/mathtype-tool.md](references/mathtype-tool.md) and call [scripts/mathtype-ppt.ps1](scripts/mathtype-ppt.ps1). Do not rely on an unverified manual paste or a formula screenshot.
+When the confirmed formula contract selects MathType, open the target presentation in desktop PowerPoint and use the MathType plugin from the PowerPoint ribbon. Treat the visible ribbon plugin as the primary installed-product entry point. Do not depend on a particular MathType executable path, Windows drive, username, or Codex installation directory. Do not replace the equation with a screenshot.
 
-Treat the bundled script and its documented `Equation.DSMT4` interface as the permanent MathType connection for this skill. Do not search the registry, rediscover the ProgID, or invent a new insertion method during ordinary figure production. Investigate the installation only when the tool's `-Action detect` fails.
+If desktop interaction tools are available, use them to select the MathType tab and invoke the appropriate insert or edit command. Do not launch `MathType.exe` directly. The normal ribbon lifecycle is:
 
-Use the tool in this order:
+1. Open the authoritative PPT and navigate to the intended slide.
+2. Select the reserved formula location or the existing MathType equation.
+3. Open the MathType ribbon tab and choose the appropriate new-equation or edit-equation command.
+4. Enter the formula in the MathType editor, close or return to PowerPoint, and confirm that the same slide now contains the equation.
+5. Position and size the resulting object inside the reserved formula rectangle; preserve stable `MATH_*` names when PowerPoint object control permits renaming.
+6. Save, close, reopen, and verify editability by selecting the equation and invoking the MathType ribbon edit command again.
 
-1. Run `-Action detect` before figure construction and stop if the `Equation.DSMT4` OLE server is unavailable.
-2. Reserve and name every formula rectangle during the joint occupancy stage.
-3. Run `-Action insert` to create one genuine editable MathType OLE object per formula at the reserved PowerPoint coordinates.
-4. Run `-Action edit` for the named object and enter the formula through MathType. Use UI automation when unattended entry is required; do not assign ordinary PowerPoint text to an OLE equation.
-5. Return to PowerPoint so MathType updates the same embedded object, then save and close the PPT.
-6. Reopen the PPT, then run `-Action inspect` and `-Action validate`. Reject missing, substituted, off-slide, or non-MathType formula objects.
+If [references/mathtype-tool.md](references/mathtype-tool.md) and [scripts/mathtype-ppt.ps1](scripts/mathtype-ppt.ps1) exist, resolve them relative to this `SKILL.md` and use them for add-in/OLE capability reporting plus saved-object inspection and validation. Their direct `AddOLEObject` insertion route is a compatibility fallback, not the preferred ribbon entry.
 
-Keep stable `MATH_*` object names so later size, position, and collision adjustments target the same formula objects in the authoritative PPT.
+If either optional file is absent, create a temporary PowerShell adapter inside the current task's build directory. The self-contained adapter must:
+
+- instantiate `PowerPoint.Application` and enumerate `COMAddIns` and `AddIns` whose name, description, path, or ProgID contains MathType, Design Science, or WIRIS;
+- record connection or loaded state and visually confirm the MathType ribbon tab when the enumeration is inconclusive;
+- enumerate saved equation shapes and record object type, name, position, dimensions, and OLE ProgID when exposed;
+- validate expected equation count, stable names where supported, positive dimensions, slide bounds, and successful ribbon-based re-editing;
+- optionally use `Shapes.AddOLEObject(..., 'Equation.DSMT4')` and `OLEFormat.DoVerb(2)` only when the ribbon route is unavailable and the ProgID is registered.
+
+The adapter may read registered CLSID server values for diagnostics, but it must never hard-code an executable path. Keep it in the build directory and out of final deliverables. Only report MathType as unavailable after both the live PowerPoint ribbon/add-in check and the registered-interface check fail; never infer that result from absent `references/` or `scripts/`.
 
 ## Apply the hard layout-priority contract
 
@@ -194,7 +218,7 @@ Use these construction rules:
 - Use only the user-confirmed number of font-size levels. Default to two restrained levels; use three or another count only when explicitly confirmed. Keep all sizes inside the confirmed range.
 - When the active A4 batch contract specifies 12 pt and 14 pt, use exactly those two sizes. Do not silently generalize that batch-specific lock to a different confirmed contract.
 - Apply the user-confirmed mixed-script font policy. If no policy is supplied after confirmation, default to Times New Roman for English, numbers, Latin variables, abbreviations, operators, and formulas, and 宋体 for Chinese.
-- Keep formulas clear, ungarbled, and editable according to the confirmed formula contract. When MathType is selected, create genuine editable MathType OLE objects, preserve consistent baseline and apparent size, and verify the saved objects remain MathType-editable in PowerPoint. When Office-native equations are selected, use Office-native editable equations; otherwise use grouped editable text with superscripts, subscripts, fraction bars, brackets, and tables. Never substitute a formula screenshot unless the user explicitly authorizes a documented raster exception. Never silently mix formula technologies.
+- Keep formulas clear, ungarbled, and editable according to the confirmed formula contract. When MathType is selected, insert through the PowerPoint MathType ribbon, preserve consistent baseline and apparent size, and verify after reopening that the ribbon edit command reopens every saved equation. When the object exposes an OLE ProgID, require `Equation.DSMT4`. When Office-native equations are selected, use Office-native editable equations; otherwise use grouped editable text with superscripts, subscripts, fraction bars, brackets, and tables. Never substitute a formula screenshot unless the user explicitly authorizes a documented raster exception. Never silently mix formula technologies.
 - Match the provided palette and visual language while maintaining academic restraint, adequate contrast, and print readability.
 
 ## Handle complex visual elements by scope
@@ -239,6 +263,6 @@ Keep temporary renders, scripts, and diagnostics in a separate build directory. 
 
 ## Validate and refine
 
-Read [references/quality-check.md](references/quality-check.md) before validating any generated figure. Perform both object-level checks and rendered-image inspection. If any check fails, revise the source PPT, export again, and repeat until the figure passes.
+If [references/quality-check.md](references/quality-check.md) exists, read it before validating. If it is absent, apply every validation rule embedded in this `SKILL.md` and run the same minimum audit: content completeness, canvas bounds, inflated text clearance, connector axis compliance, object overlap, formula editability, render fidelity, and output-file integrity. Missing optional references must never suppress QA or block construction. Perform both object-level checks and rendered-image inspection. If any check fails, revise the source PPT, export again, and repeat until the figure passes.
 
 Do not finish after merely generating files. Do not report a connector as attached based only on visual proximity. Do not claim the PPT is editable if it contains only a full-slide raster image.
