@@ -7,6 +7,10 @@ Use this checklist after every generation or revision. A figure passes only when
 Reject the figure immediately if any of these conditions remains:
 
 - An accidental overlap or occlusion exists between text, formulas, images, nodes, frames, arrows, labels, titles, legends, or panel boundaries.
+- Any ordinary text's rendered rectangle, inflated by the confirmed external-clearance token or 4–6 pt by default, intersects an unrelated image, module, symbol, connector, arrowhead, divider, frame, boundary, or another text rectangle.
+- An image caption touches or overlaps its image or enclosing boundary when unused space could separate the complete image-caption unit.
+- A data route is diagonal even though the reference is horizontal/vertical or the endpoints can be aligned by moving the peer group or adding correct semantic anchors.
+- A connector attaches to a decorative fragment such as one face of a 3D cube, one layer of a stacked image, or a label instead of the complete semantic object or its explicit boundary anchor.
 - Two unrelated elements do not overlap numerically but are so close that they visually adhere.
 - A title shares space with the first content row or a panel boundary.
 - Ordinary text touches or crosses a connector, arrowhead, divider, frame, image edge, or module boundary.
@@ -33,6 +37,8 @@ Do not count a confirmed source-semantic overlay as a collision when all of the 
 - Record the final figure bounding box, width/height ratio, usable margins, and orientation. Reject post-layout stretching or an upside-down/mirrored result.
 - Keep every object inside the page boundary with consistent outer margins.
 - Confirm a pre-layout occupancy record was made for every text, symbol, image, and connector label: locked font level, measured content bounds, padding, proposed rectangle, peer group, and parent panel.
+- For every text object, record both the rendered glyph rectangle and its externally inflated clearance rectangle. Compare the inflated rectangle against every unrelated occupied object, including images, module borders, connector shafts, arrowheads, panel dividers, and enclosing frames; do not limit the check to neighboring text boxes.
+- For every image caption, record the image bottom, caption top, caption rendered bottom, enclosing boundary, and both clear gaps. Reject the layout unless the caption is wholly below or beside the image as intended and clear of the enclosing boundary.
 - Confirm the occupancy record was calculated jointly for text, formulas, symbols, icons, images, frames, arrows, arrowheads, and labels. Reject a layout assembled by placing one object category first and squeezing later categories into the leftover space.
 - Before inspecting the rendered slide, verify that the sum of occupied peer widths or heights, repeated gaps, and parent padding fits the parent panel without intersection.
 - Identify every left-right, top-bottom, radial, repeated-grid, or rotational structure. Record its axis/center and compare paired coordinates numerically, not only visually.
@@ -74,6 +80,7 @@ Do not count a confirmed source-semantic overlay as a collision when all of the 
 ## 4. Connectors and arrows
 
 - Confirm that a whole-object and connection ledger was completed before construction: semantic whole, native PowerPoint primitive, direction, path type, anchors, arrowhead ends, weight, dash style, and z-order.
+- For every multipart object, confirm the ledger distinguishes the complete semantic object from its visible faces/layers and names the stable whole-object or explicit boundary anchors. Reject connectors attached to an arbitrary face, overlay, label, or subimage.
 - Confirm the non-connector layout passed overlap, whitespace, boundary, peer-alignment, and reserved-corridor checks before logical connectors were added. Reject a workflow that drew arrows first and forced the modules around them.
 - Verify arrow direction against the source or system logic before checking arrow type. Reject a correctly shaped arrow that points the wrong way, and reject an arrowhead added to an undirected source line.
 - Confirm every source path was classified as straight, folded, curved, or truly branched before construction.
@@ -86,6 +93,7 @@ Do not count a confirmed source-semantic overlay as a collision when all of the 
 - For connectors, verify `BeginConnected` and `EndConnected` are true. For an approved curve or freeform/polyline, verify both endpoint coordinates meet the intended module boundary anchors exactly and record that the path must be recomputed after either endpoint module moves.
 - Inspect the names or text of connected shapes, or the recorded endpoint modules for approved native paths, to confirm every route reaches the intended module rather than a nearby label or invisible accidental object.
 - Prefer a straight horizontal/vertical connector when both endpoints can be aligned.
+- Compare the reference orientation before routing. If a source segment is horizontal/vertical or visually near that axis because of raster imprecision, require exact coordinate equality after reconstruction: equal endpoint y for horizontal routes and equal endpoint x for vertical routes. Any remaining avoidable diagonal is a layout failure.
 - Compare shape-center anchors before routing. For symmetric pairs, require corresponding anchors to share the same x or y coordinate and require mirrored connectors to have equal routed lengths within normal rounding tolerance.
 - Before accepting an elbow, check whether moving an endpoint by a few pixels would allow a straight connector.
 - Build branches from a clean orthogonal trunk and horizontal/vertical branches. Avoid diagonal fan-outs when a right-angle route is available.
@@ -127,6 +135,8 @@ Do not count a confirmed source-semantic overlay as a collision when all of the 
 - Inspect the entire figure at fit-to-page scale for balance and hierarchy.
 - Overlay or mentally trace the recorded symmetry axes. Reject paired panels, sidebars, labels, central-channel boxes, or arrows that are visibly or numerically unbalanced.
 - Inspect at 100% and approximately 200% for text clarity, arrow contact, clipping, and formula rendering.
+- Inspect every connector-dense or annotation-dense region separately at 200–400%. At that scale, verify that ordinary data paths contain only the reference-approved orientations, text clearance remains visible on every side, captions remain detached from images, and arrow shafts remain visible.
+- Run a numeric local audit after the visual pass: count non-orthogonal segments in routes classified as horizontal/vertical/orthogonal, report endpoint-coordinate deltas for straight routes, and report intersections between inflated text rectangles and all unrelated occupied objects. Require zero unexplained failures before delivery.
 - Check all arrows for floating endpoints, oversized heads, arrowhead-only stubs, zero-length geometry, avoidable bends, and inconsistent weights.
 - Check every wrapped label for semantic balance and orphaned single-character or single-variable lines.
 - Check all boxes for internal padding and all sections for even whitespace. When the master has unused vertical or horizontal space, reject avoidably tight channels between labels and large panels.

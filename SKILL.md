@@ -62,6 +62,14 @@ When fidelity conflicts with readability, apply this order without exception:
 
 Treat text, formulas, frames, images, nodes, symbols, arrow shafts, arrowheads, connector labels, titles, panel boundaries, legends, and annotations as occupied geometry. A layout is not valid merely because each object fits inside its own bounding box. Measure and inspect clear edge-to-edge distance between unrelated occupied regions.
 
+Run an axis-and-clearance preflight before creating any logical connector:
+
+1. Record each semantic whole object separately from its visible fragments. A three-face cube, layered image pair, grouped icon, or multipart feature block is one semantic object. Group its parts or add a stable whole-object anchor; never attach a data connector to one decorative face, overlay, label, or cropped subpart merely because that fragment is easy to select.
+2. Record the intended horizontal and vertical axes from the reference. When a source path is horizontal or vertical, or is visually near-horizontal/near-vertical because of raster imprecision, treat that axis as exact. Move the peer objects together or add explicit boundary anchors until the relevant endpoint coordinates are equal. Do not accept a slight diagonal produced by automatic connection sites.
+3. Inflate every rendered text rectangle by a repeatable external-clearance token, 4–6 pt by default, and test it against every unrelated text box, image, module, symbol, arrow shaft, arrowhead, divider, frame, and panel boundary. A text box passes only when this inflated rectangle is collision-free. If unused space exists in the parent, move or rebalance the content into that space before reducing the gap, changing the font, or permitting overlap.
+4. Treat an image plus its caption as one measured unit. Require `image bottom + gap <= caption top` and `caption bottom + gap <= enclosing boundary`. If the unit does not fit, move the complete unit, resize the image conservatively, or enlarge/rebalance the parent; never push the caption upward onto the image to escape a boundary.
+5. Add connectors only after the semantic objects, axes, and inflated text rectangles pass. Use one straight horizontal/vertical connector for an aligned pair and an explicit orthogonal polyline for a confirmed branch or fixed route. If PowerPoint automatic rerouting introduces a diagonal, hook, or arrowhead-only stub, reject that route and replace it with locked anchors or fixed waypoints.
+
 Allow overlap only when it is a confirmed semantic construction in the source, such as an editable variable or symbol intentionally placed over a dataset image, or a node intentionally covering a continuous lower-layer path. For an intentional image overlay:
 
 - keep the overlay entirely inside the image's safe interior;
@@ -143,7 +151,7 @@ Use these construction rules:
 - Start from the whole semantic object, not its visible fragments. Prefer one native PowerPoint rectangle, circle, diamond, star, line, elbow connector, curve, or polyline over a hand-built approximation.
 - Before drawing any arrow, confirm the source and destination and therefore the arrowhead direction. Only then choose straight, elbow, curve, or diagonal geometry and set arrowhead type, length, width, and line weight. Do not add an arrowhead to an undirected source line.
 - Classify every reference path before drawing it. Reproduce a source curve with a native PowerPoint curve or arc, a source folded path with one native elbow connector or polyline, and a source straight path with one straight line or connector. Never approximate a curve with straight segments or a folded path with several independent lines when one native object can express it.
-- Prefer straight horizontal or vertical routing, then a balanced orthogonal fold, and only then a diagonal when the diagonal carries real meaning. Align anchors before selecting the route.
+- Prefer straight horizontal or vertical routing, then a balanced orthogonal fold, and only then a diagonal when the diagonal carries real meaning. Read the reference orientation first, lock the corresponding x or y axis, and align whole-object semantic anchors before selecting the route. Treat an avoidable diagonal as a placement failure, not as an acceptable connector style.
 - Keep one continuous path as one object even when a factor, node, diamond, star, or other shape visually interrupts it. Draw the complete path on a lower z-order and place the intervening shapes above it. Occlusion is not a reason to split the path.
 - Split a path only at a true branch, a junction with multiple semantic destinations, or independently attached endpoints. At a true branch, represent each unbranched run with the fewest native objects and place any junction marker above the lines.
 - Establish z-order before construction: container backgrounds and frames at the back, continuous paths and connectors above them, factor/node shapes above paths, and labels plus annotations at the top. Verify that the overlay shape, not a white gap or manually shortened line, creates the visible interruption.
@@ -152,7 +160,7 @@ Use these construction rules:
 - Keep every block, label, formula, legend, boundary, and connector complete and within the canvas.
 - Use native PowerPoint connectors with both endpoints genuinely attached when a straight or elbow connector can reproduce the intended route without uncontrolled rerouting. When a source curve or a fixed-waypoint folded route requires one native curve or freeform/polyline, place its endpoints exactly on the intended boundary anchors, name the path, and recompute its endpoints after either module moves.
 - Prefer a single horizontal or vertical connector whenever endpoints can be aligned. Use orthogonal elbows for branches. Use diagonal connectors only when the diagonal direction carries real meaning.
-- Align connector endpoints before choosing a connector type; do not introduce a bend to compensate for a few pixels of center misalignment.
+- Align connector endpoints before choosing a connector type; do not introduce a bend or diagonal to compensate for a few pixels of center misalignment. For a visually horizontal source, require equal endpoint y coordinates; for a visually vertical source, require equal endpoint x coordinates. Move the peer group or create explicit boundary anchors until equality is achieved.
 - For a single folded route, use one native elbow connector or one native polyline and keep its bend location balanced. Use explicit waypoint anchors and multiple attached segments only for a true branch or when one native object cannot attach the required independent endpoints. Do not rely on uncontrolled automatic rerouting.
 - Reserve connector and connector-label corridors before placement. Reject any connector segment that intersects text, a formula, a picture label, or another reserved object rectangle.
 - Keep every route label in its own above-line or below-line corridor. Never center ordinary text directly on a connector, panel border, divider, or arrow shaft.
@@ -202,13 +210,17 @@ Classify every non-native visual before drawing and preserve its aspect ratio:
 - Render simple stars, circles, diamonds, squares, checks, crosses, and arrowheads as native PowerPoint shapes whenever semantics allow. Do not encode them as Unicode text merely for convenience.
 - Generate irreducible local raster assets at no less than twice their final placed pixel dimensions, with transparency when appropriate. Reject blur, halos, loose crops, stretching, and source-semantic drift.
 
-Use shape-center anchors as the first choice. Align center points before drawing arrows so paired connectors are exactly horizontal or vertical and symmetric spokes have equal routed lengths. Recompute the surrounding boxes rather than accepting a slightly tilted connector.
+Use the center of the whole semantic object as the first-choice anchor, not the center of a visible fragment. For multipart 3D cubes, layered images, and grouped icons, group the complete object or create stable whole-object boundary anchors before connecting. Align those anchors before drawing arrows so paired connectors are exactly horizontal or vertical and symmetric spokes have equal routed lengths. Recompute the surrounding boxes rather than accepting a slightly tilted connector.
 
 Reject these recurring failure modes:
 
+- A horizontal or vertical source route becomes diagonal because elements were not aligned before connecting.
+- A connector attaches to the front face of a 3D cube, one layer of a stacked image, a label, or another visual fragment instead of the complete semantic object.
 - A node or oval and its explanatory text occupy intersecting rectangles even though empty space exists elsewhere in the parent panel.
 - A label is positioned relative to a symbol's left coordinate or visual center and therefore intrudes into the symbol's actual width.
 - Text passes the overflow check but overlaps another text box, frame, connector, node, or legend mark.
+- Text is moved toward or onto an image, frame, or module to avoid another boundary even though unused space exists elsewhere.
+- An image caption intersects the image or enclosing frame because the image-caption unit was not measured as a whole.
 - One peer is moved independently to fix a collision, leaving unequal gaps or a broken symmetry pattern.
 - Fonts are reduced or manual line breaks are added before testing whether available whitespace can absorb the content.
 - Shapes are drawn first and content is forced into them without a measured occupancy preflight.
