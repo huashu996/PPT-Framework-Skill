@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper-Fig-Skill"
+  short_description: "Build balanced academic figures with native PPT geometry"
+  default_prompt: "Use $paper-fig-skill to confirm the canvas, font ranges, and MathType choice; call its bundled MathType-PowerPoint tool when selected; map the complete system and route logic; jointly lay out all content without overlap; then add native connectors and refine the same editable PowerPoint."
