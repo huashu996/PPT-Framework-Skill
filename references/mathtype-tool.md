@@ -1,91 +1,100 @@
-# MathType PowerPoint tool
+# Portable Fast MathType PowerPoint Workflow
 
-Use `scripts/mathtype-ppt.ps1` when the confirmed formula contract selects MathType. The tool links PowerPoint directly to the installed MathType OLE server and uses the registered `Equation.DSMT4` object type.
+Use the visible MathType/WIRIS/Design Science plugin in the PowerPoint ribbon as the primary insertion and editing route. Resolve every helper relative to the selected `SKILL.md`. Never hard-code a MathType executable, username, drive letter, Codex home, or repository path.
 
-## Fixed integration interface
+## Choose the fast route
 
-Treat this interface as authoritative. Do not search for the MathType interface again unless `-Action detect` reports that registration is missing:
+- For one to four formulas, insert directly into the authoritative PPT.
+- For five or more formulas, assign one formula agent and create a separate `mathtype_formula_bank_test.pptx` while the main agent builds the non-formula layout.
+- Give the formula agent exclusive ownership of desktop PowerPoint UI during the batch. Other agents must not automate the same PowerPoint session concurrently.
 
-- OLE ProgID: `Equation.DSMT4`
-- Registered description: `MathType 7.0 Equation`
-- CLSID: `{0002CE03-0000-0000-C000-000000000046}`
-- PowerPoint insertion call: `Shapes.AddOLEObject(left, top, width, height, 'Equation.DSMT4')`
-- PowerPoint editing call: `shape.OLEFormat.DoVerb(2)` where verb 2 is `Edit`
-- Required saved-object check: `shape.OLEFormat.ProgID -eq 'Equation.DSMT4'`
+## Create the formula ledger once
 
-The bundled tool resolves the MathType executable from the OLE registration. Do not hard-code or rediscover the executable path in ordinary figure work.
+Create `formula-targets.json` with one record per equation:
 
-## Required sequence
-
-1. Run `preflight` before constructing the figure. It validates MathType and obtains a usable PowerPoint application, preferring an already active instance and otherwise creating a private instance.
-2. Reserve each formula's occupied rectangle during joint layout.
-3. Insert one named MathType OLE object into each reserved rectangle.
-4. Open the named object with the OLE `Edit` verb.
-5. In the MathType editor, focus the equation body, select all, press Backspace, then enter the intended formula. Save with `Ctrl+S` and close the editor with `Ctrl+F4` so the embedded object updates in PowerPoint.
-6. Call `fit` with the reserved rectangle. MathType commonly expands the OLE object to its intrinsic equation size after editing; `fit` preserves the equation aspect ratio, scales it inside the reserved rectangle, and centers the same object.
-7. Repeat edit and fit for every formula while reusing the same active PowerPoint presentation. Save and close once after the full batch.
-8. Reopen the saved PowerPoint once and run `inspect-validate` to inspect and validate all MathType objects in one process.
-
-Run commands from PowerShell:
-
-```powershell
-$tool = 'C:\Users\18144\.codex\skills\paper-fig-skill\scripts\mathtype-ppt.ps1'
-
-& $tool -Action preflight
-
-& $tool -Action insert `
-  -PptPath 'C:\path\figure.pptx' `
-  -SlideNumber 1 `
-  -ShapeName 'MATH_Loss' `
-  -Left 300 -Top 200 -Width 90 -Height 24
-
-& $tool -Action edit `
-  -PptPath 'C:\path\figure.pptx' `
-  -SlideNumber 1 `
-  -ShapeName 'MATH_Loss'
-
-& $tool -Action fit `
-  -PptPath 'C:\path\figure.pptx' `
-  -SlideNumber 1 `
-  -ShapeName 'MATH_Loss' `
-  -Left 300 -Top 200 -Width 420 -Height 48
-
-& $tool -Action inspect-validate `
-  -PptPath 'C:\path\figure.pptx' `
-  -ExpectedCount 1
+```json
+{
+  "name": "MATH_LOSS",
+  "tex": "L=\\sum_i w_i e_i",
+  "target_slide": 1,
+  "reserved_rect_pt": [300, 180, 90, 24],
+  "apparent_size_pt": 10
+}
 ```
 
-PowerPoint coordinates and sizes are in points. Use stable `MATH_*` shape names. `insert` creates a genuine editable MathType OLE object; it does not create a screenshot. `edit` opens the selected object through its MathType `Edit` verb and intentionally leaves the presentation open for interactive or UI-automated formula entry.
+Freeze names and order after production starts. The main PPT uses matching named placeholders and does not wait for formula insertion.
 
-The legacy MathType OLE server does not expose a reliable text-setting COM property. Do not pretend that assigning a PowerPoint text string populates the equation. Enter formula content through the opened MathType editor, then use `inspect-validate` to verify the saved object type, count, dimensions, and slide bounds in one call.
+## Run one ribbon smoke test
 
-The tool never closes unrelated user presentations. It first tries the active PowerPoint application because some Office installations return an unusable `New-Object -ComObject PowerPoint.Application` wrapper with a null `Presentations` collection. When no usable active instance exists, the tool creates and owns a private PowerPoint instance. If preflight asks for PowerPoint to be opened once, open it and rerun instead of rediscovering COM registration or switching to an improvised insertion method.
+1. Open desktop PowerPoint once.
+2. Select the MathType tab and invoke its new-equation command.
+3. Enter one smoke-test formula and return to PowerPoint.
+4. Confirm the inserted object is editable through the ribbon.
+5. When exposed, require `OLEFormat.ProgID = Equation.DSMT4`.
+6. Freeze this insertion recipe for the whole batch. Do not repeat add-in, registry, script, or path discovery for each equation.
 
-## Safe UI automation sequence
+Windows UI Automation may select the MathType tab and invoke the enabled visible insert control. Do not spend time attempting `PowerPoint.Application.Run` against private ribbon callbacks when the visible UI control works.
 
-Use this sequence for each named formula object:
+## Build one formula bank
 
-1. Open the object with `edit` and wait for a visible MathType window.
-2. Refresh the current window state and focus the equation canvas.
-3. Press `Ctrl+A`, then Backspace. Do not type or paste while the prior equation remains selected.
-4. Enter the replacement equation.
-5. Press `Ctrl+S`, wait for the update, then press `Ctrl+F4`.
-6. Wait until the MathType window closes before calling `fit` or opening the next object.
+Keep one PowerPoint process and one formula-bank presentation open.
 
-If MathType reports that the clipboard does not contain equation data, dismiss the dialog, close the editor without accepting an empty replacement, reopen the same named object, and repeat with the delete-before-input sequence. Do not count the object as edited merely because the automation loop advanced.
+For every ledger item:
 
-Avoid multiline equations in narrow portrait rectangles. `fit` preserves aspect ratio; a tall, narrow equation can become a hairline-width or black-bar artifact. Match the reserved rectangle to the natural equation aspect ratio and inspect the rendered result. Keep a nonformula variable inventory in adjacent native PowerPoint text only when the confirmed formula contract permits that separation; keep every actual formula in MathType.
+1. Invoke the validated MathType ribbon insert command.
+2. Enter the normalized TeX/content through the MathType editor.
+3. Return to PowerPoint.
+4. Rename the new equation to the exact ledger target name.
+5. Place it in the next labeled grid cell.
+6. Continue without final-size tuning.
 
-## Formula-writing lifecycle
+Save at controlled checkpoints and after the final item, not after every equation. If one equation fails, mark that record and continue; repair failed records at the end.
 
-For every formula, use this exact lifecycle:
+## Merge once
 
-1. Assign a stable semantic name such as `MATH_FinalAttention` and reserve its final layout rectangle.
-2. Call `insert` once. Never replace the object with an image after it exists.
-3. Call `edit` for that name. Use the visible MathType editor for manual or UI-automated content entry.
-4. Save with `Ctrl+S`, close the editor with `Ctrl+F4`, return focus to PowerPoint, and confirm the rendered formula changed inside the same named object.
-5. Call `fit` once with the reserved formula rectangle. Do not manually guess the post-edit size or replace the expanded object.
-6. Repeat steps 1–5 for every formula in the same active PowerPoint/MathType session.
-7. Save once, close once, reopen once, and call `inspect-validate` with the expected total object count. Also validate important formula names individually when omissions would be hard to notice.
+After the bank and authoritative PPT are ready, open both in the same PowerPoint instance. For every target name:
 
-Reject the result if copying from MathType produced only an enhanced metafile, picture, or ordinary text object. A formula is accepted as MathType-editable only when reopening the PPT still reports `OLEFormat.ProgID = Equation.DSMT4`.
+1. Copy the matching bank equation.
+2. Paste it on the target slide.
+3. Preserve the exact name.
+4. Scale proportionally to fit the reserved rectangle.
+5. Center it horizontally and vertically.
+6. Remove the placeholder only after a successful match.
+
+Do not force width and height independently. Correct baseline alignment only after the full batch is placed.
+
+## Validate the saved batch once
+
+The default fast validation is:
+
+- expected formula count equals the ledger count;
+- every target name exists exactly once;
+- every equation has positive dimensions and remains on its slide;
+- each saved object is editable; when exposed, require `Equation.DSMT4`;
+- the bank and merged PPT reopen successfully;
+- the first, middle, and last formulas reopen through the MathType ribbon edit command.
+
+Reopen every equation only when the user explicitly requests high assurance or a sampled equation fails.
+
+## Optional helper interface
+
+When `scripts/mathtype-ppt.ps1` exists, use it for one detection pass and one saved-object validation pass:
+
+```powershell
+$skillRoot = '<directory containing the selected SKILL.md>'
+$tool = Join-Path $skillRoot 'scripts\mathtype-ppt.ps1'
+
+& $tool -Action detect
+& $tool -Action inspect -PptPath 'C:\path\figure.pptx'
+& $tool -Action validate -PptPath 'C:\path\figure.pptx' -ExpectedCount 12
+```
+
+Use direct `Shapes.AddOLEObject(..., 'Equation.DSMT4')` only as a compatibility route when the ribbon cannot be operated and the ProgID is registered. The editor does not expose a universally reliable text-setting COM property, so do not pretend that ordinary PowerPoint text populates an equation.
+
+If the helper is missing, create a temporary task-build adapter that:
+
+- enumerates MathType/WIRIS/Design Science PowerPoint add-ins;
+- enumerates equation shape names, positions, dimensions, and ProgIDs when exposed;
+- validates expected count, unique names, positive dimensions, slide bounds, and successful reopen.
+
+Use Office-native equations or grouped editable math text only when the user authorizes fallback. Never substitute a screenshot silently.
