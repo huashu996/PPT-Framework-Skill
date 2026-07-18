@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper-Fig-Skill"
-  short_description: "Build complete editable figures quickly"
-  default_prompt: "Use $paper-fig-skill with parallel analysis agents and the two-render fast path to reproduce this figure completely as an editable PowerPoint."
+  short_description: "Build editable academic figures with adaptive fast routing"
+  default_prompt: "Use $paper-fig-skill to choose the 5–8 minute single-page fast path or the 15-minute complex path and deliver the requested editable outputs."
