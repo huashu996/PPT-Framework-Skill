@@ -1,299 +1,288 @@
 ---
 name: paper-fig-skill
-description: Create publication-ready, layout-first and symmetry-aware academic framework, technical-route, chapter-overview, and research-content figures from papers, folders, outlines, formulas, palettes, and reference figures. Use when Codex must analyze research materials, classify every non-text/formula visual into one of four construction methods, segment complex source imagery into independently movable components, reproduce or optimize a reference layout without omitting details, and deliver an editable PowerPoint, high-resolution PNG, and Word figure version.
+description: Create publication-ready academic framework, technical-route, chapter-overview, and research-content figures as editable PowerPoint, with optional PNG and Word outputs. Use when Codex must reproduce or optimize a reference figure, extract research content, preserve editable text and equations, prepare complex local visuals, and build accurate semantic connectors. Use a 5–8 minute adaptive fast path for ordinary single-page reference reconstruction and a 15-minute multi-agent path for more complex figures.
 ---
 
 # Paper-Fig-Skill
 
-Turn research evidence and framework materials into a complete academic figure. Preserve the research content while improving hierarchy, visual balance, and editability.
+Build the figure once, merge parallel work once, and validate once. Preserve semantic correctness, editability, text clearance, formula editability, and connector direction while avoiding repeated analysis, repeated PowerPoint startup, and open-ended visual iteration.
 
-## Run one compact intake gate
+## Use the 15-minute workflow by default
 
-At the start of a new figure, resolve the six controlling decisions below in one compact message. Prefill every known value and ask only for missing values. If the user has already supplied all six values, explicitly says to start directly, says not to ask again, or confirms a proposed contract, treat the contract as complete and begin without another confirmation turn. Reuse the confirmed contract for revisions of the same figure in the same task unless the user changes it.
+Target completion within 15 minutes after all source materials are locally available and the controlling contract is known. Treat this as the normal workflow, not a reduced-quality exception.
 
-1. Intended use and exact master/canvas: page or slide size, orientation, usable margins, and any required aspect ratio.
-2. Typography contract: Chinese and Latin fonts, permitted size range, exact number of size levels, and whether mixed-script runs may use different fonts.
-3. Formula contract: whether formulas must use editable MathType OLE objects, Office-native editable equations, or grouped editable text; confirm the formula size range separately when it differs from ordinary text.
-4. Content-editing boundary: preserve wording verbatim or allow shortening, rephrasing, line balancing, and removal of decorative icons.
-5. Visual contract: exact reference reproduction or optimized adaptation, color/style preference, and whether apparent symmetry and orientation must be preserved.
-6. Output contract: editable PPT, high-resolution PNG, Word version, and any explicitly allowed rasterized exceptions.
+Preserve these non-negotiable requirements:
 
-Also ask for missing materials, the target framework/chapter/study, reference figures, and output language. Do not block on values that are already explicit. While waiting for a genuinely missing controlling choice, perform only read-only source inventory, text/formula transcription, environment preflight, and four-class analysis; do not commit geometry that depends on the missing choice. If no Chinese font is supplied, propose 宋体 rather than silently assuming it.
+- No missing, clipped, unreadable, or accidentally overlapping content.
+- Keep ordinary text and formulas clear of images, frames, modules, connectors, arrowheads, and unrelated text.
+- Keep a source-horizontal or source-vertical route exactly horizontal or vertical.
+- Attach connectors to the intended semantic object or explicit boundary anchor, never to a nearby label or decorative fragment.
+- Keep required formulas editable under one confirmed formula technology.
+- Keep logical structure, text, labels, frames, nodes, arrows, and connectors editable in PowerPoint.
+- Never flatten the complete figure into a screenshot.
 
-## Follow the phase-gated layout-first workflow
+Use a high-assurance extended audit only when the user explicitly requests pixel-level reproduction, per-object equation reopening, or exhaustive verification. Do not let optional decorative differences trigger an extended audit.
 
-Execute these stages in order. Treat every stage as a hard gate: do not start a later stage until the current stage has a recorded, internally consistent result. Do not fill provisional boxes with text and stretch the finished diagram afterward.
+## Use the 5–8 minute single-page fast path
 
-1. **Confirm the generation contract.** Confirm the master, usable margins, fonts, ordinary text size range, formula technology, formula size range, content-editing boundary, visual fidelity, and outputs. Stop before construction if MathType use or either size range is unknown.
-2. **Understand the complete system and route logic.** Read the supplied images and text together. Identify the central problem, modules, submodules, hierarchy, inputs, outputs, semantic peer groups, and reading order. Create a route ledger before drawing: for every visible or implied flow, record the source, destination, direction, arrowhead end, straight/elbow/curve/branch type, junction behavior, anchor side, line weight, solid/dashed style, z-order, and an axis lock of `horizontal`, `vertical`, or `free`. For every horizontal or vertical route, record the shared numeric baseline or axis coordinate that both semantic anchors must use. Distinguish a shared bus, a merge node, and several independent arrows. Do not infer a connection from visual proximity. Do not proceed until every source and destination is accounted for.
-3. **Lock content geometry before container geometry.** Set the confirmed PPT master and usable figure bounds. Lock the exact wording, formulas, fonts, size levels, wrapping, symbols, pictures, and icons. Render or probe the final text and formulas at their real sizes; decide their occupied rectangles and intended positions. Add internal padding and only then derive text boxes, formula boxes, module boxes, system panels, and the complete figure bounds. Never fix a box first and shrink or crowd its content afterward.
-4. **Classify every non-text, non-formula element before drawing.** For every visible object in the reference, choose exactly one of these four construction classes and record the choice in the object/asset inventory:
-   1. **Original screenshot or cutout.** Use a faithful crop or isolated source element when the reference already contains the needed complex visual and its resolution is sufficient. Keep its aspect ratio, direction, internal geometry, color relationships, and safe crop.
-   2. **Self-generated imitation pasted into PowerPoint.** Use a newly generated raster when the source crop is unusable or when a complex stylized object cannot be reproduced faithfully with practical PowerPoint geometry. Generate the complete object at no less than twice its placed size, imitate the reference silhouette, curve/straight character, direction, color, outline, and visual weight, and place it as a tightly cropped image layer. Keep separable text and formulas editable above it.
-   3. **One native PowerPoint shape.** Use one native shape, line, connector, curve, freeform, or icon when a single PowerPoint primitive matches the reference object.
-   4. **Stacked native PowerPoint shapes.** Use a grouped, named stack of native shapes when the reference object is best reproduced by overlapping or adjoining PowerPoint primitives. Record the subshape count, stacking order, alignment rules, and grouping boundary.
+Use this path when all of these are true:
 
-   Treat this four-class decision as a mandatory pre-drawing gate:
+- one reference image or one simple source slide;
+- one output slide;
+- no more than 60 visible text instances;
+- no more than 80 logical routes;
+- zero to three local raster crops;
+- no newly generated scientific illustration;
+- no more than four formulas, or no formulas;
+- the user requests reference reproduction rather than a new research narrative.
 
-   - **Class 1 — source screenshot/cutout:** crop faithfully, but split every complex source graphic into separate tight components whenever its arrows, icons, devices, panels, or other parts can be moved independently. Do not paste the whole complex motif or subsystem as one screenshot.
-   - **Class 2 — generated imitation raster:** imitate the reference when a usable source crop or practical native construction is unavailable. The final PPT must still contain one placed image per independently movable semantic component; generating a composite first does not justify placing that composite intact.
-   - **Class 3 — one native PowerPoint primitive:** use one native object whenever PowerPoint already provides the required shape or path, especially ordinary straight, elbow, or curved connectors with a native line-end arrowhead.
-   - **Class 4 — stacked native construction:** use the fewest grouped native shapes needed when no single primitive matches. Preserve subshape count, overlap, stacking order, alignment, and visible silhouette.
+Classify the task in no more than 20 seconds. Do not run every specialist merely because the responsibility exists:
 
-   Record one class and one reason for every non-text, non-formula reference element before creating the first shape. If the class is undecided, stop and analyze the element instead of drawing an approximation.
+- Skip the formula agent when the formula target list is empty.
+- For one to four formulas, let the global agent insert them directly unless ribbon UI work would block layout.
+- Merge text and asset work into one specialist when all raster work is limited to three lossless source crops.
+- Start a dedicated complex-visual agent only for generated imagery, transparency work, segmentation, or more than three independent raster assets.
+- Always assign arrow semantics separately when the figure contains more than 12 routes; otherwise the global agent may record the route ledger while laying out.
 
-   Do not draw any non-text, non-formula element until every reference element has one recorded class. Choose the class that best preserves the reference, not the class that is fastest to author. Do not replace a complex object with a generic placeholder, omit repeated arrow icons, merge several visible objects into one simplified symbol, or discard a small element as decoration. A rough but complete reconstruction is preferable to a polished but incomplete one. Preserve one-to-one element count, orientation, arrow direction, and path character: a source curve remains curved, a source straight segment remains straight, and a source block arrow is not silently converted into an ordinary line arrow.
+Keep the five logical responsibilities, but use only the agents that have nonempty work. Never spawn an agent to return an empty ledger.
 
-   For class 1 and class 2 raster objects, use **one independently movable semantic component per placed image**. Split a complex source or generated artwork into separate tight crops for each arrow, icon, device, panel graphic, or other independently positioned component. Do not paste a multi-arrow cycle, a group of separable icons, or a complete subsystem as one flat image merely because it is faster. Keep each component selectable, movable, replaceable, and independently scalable in PowerPoint. Permit one raster to contain several visible parts only when they form one genuinely inseparable visual object and the object/asset inventory explicitly records why they cannot be separated. Rebuild all separable text, formulas, nodes, frames, and ordinary connectors outside the raster.
+Use this fast-path budget:
 
-   Before positioning split components, determine whether they form a **host-centered structure** around one text block, image, formula, node, or other central semantic object. Record the host object, its visible bounds, visual center, surrounding component order, direction, orbit/ring radius, and intended clear gap. Lock and measure the host first; then place the independent surrounding components around that host. Do not arrange circular arrows, petals, brackets, orbiting icons, radial nodes, or decorative frames as unrelated free-floating objects. Align the visible alpha/content bounds of cropped raster components rather than their raw rectangular image frames, which may contain unequal transparent padding. Keep the surrounding components independently editable, but treat the complete host-plus-surrounding set as one named layout group for centering, spacing, and outer-panel alignment.
-5. **Lay out all content together without connectors.** Treat text, formulas, shapes, pictures, symbols, titles, labels, arrowheads, and reserved connector corridors as simultaneous occupied geometry. Place the complete composition, not one object category at a time. Detect symmetry, mirror paired coordinates, normalize peer sizes, distribute whitespace, and reserve title bands and route-label corridors. Before drawing connectors, align every pair of axis-locked semantic anchors numerically. Move the source module, destination module, or their complete peer group until a horizontal route's anchors share exactly one y-coordinate and a vertical route's anchors share exactly one x-coordinate. Reject the layout if any unrelated occupied rectangles overlap, touch a boundary, have visually sticky gaps, leave avoidable local crowding while usable space remains elsewhere, or require a nominally horizontal or vertical route to compensate for anchor misalignment. Do not draw logical arrows during this stage.
-   - Compute anchor centers explicitly. For a left-to-right horizontal route compare `Top + Height / 2`, not `Top`; for a top-to-bottom vertical route compare `Left + Width / 2`, not `Left`. Equal top or left coordinates do not prove that the actual connection sites are co-axial when peer heights or widths differ.
-   - For every host-centered structure, require the host visual center to coincide with the recorded group center. Place the surrounding components in their reference order with consistent radial or edge-to-edge clearance, preserve their original clockwise/counter-clockwise direction, and compare mirrored or repeated components by their visible content bounds. Center the completed group in its parent panel only after its internal orbit/ring geometry passes.
-6. **Add connectors only after the layout passes.** Re-read the route ledger and connect the already placed modules from their intended boundary anchors. Confirm direction first, then choose the native path type. A route locked as horizontal must be exactly horizontal; a route locked as vertical must be exactly vertical. Prefer genuine shape connection sites and move or realign the connected elements until those anchors share the recorded axis. Never accept a slightly diagonal connector merely because it reaches both shapes. Prefer horizontal or vertical straight routes, then balanced orthogonal folds, then meaningful diagonals. Use a true PowerPoint curve for a curved source path and one native elbow/polyline for one folded route. Build every ordinary straight, elbow, curved, or polyline arrow as one native PowerPoint line/connector/path object and set the arrowhead on that same object's line end. Never assemble a logical arrow from a shaft plus a separate triangle or arrowhead shape. Reserve visible shaft length and use a filled or open arrowhead only as confirmed by the source. Reject any route that crosses text, a formula, a picture, an unrelated module, another arrowhead, or a reserved label corridor.
-   - When one visible shape needs several independent exits but exposes only one usable side-center connection site, create a tiny invisible proxy anchor exactly on the visible boundary and on the recorded shared baseline. Attach one native connector to that proxy and the destination. The proxy solves connection-site scarcity; it must never become a separate arrowhead or a visually detached endpoint.
-   - After moving any module or peer group, reroute the existing connectors and recheck their actual PowerPoint geometry. Do not assume the connector remained horizontal or vertical because the intended coordinates were correct before attachment.
-7. **Converge by editing the same PowerPoint.** Freeze the first complete editable draft as the authoritative artifact. Render it, inspect it at whole-page and 100–200% local views, and move, resize, crop, reorder, or reroute the existing objects. Recompute affected connectors after moving modules. Do not regenerate for ordinary spacing, overlap, line routing, z-order, title, formula, or label corrections. Repeat same-file micro-adjustment and QA until the acceptance checklist passes.
-8. **Finish formulas after the structure is frozen.** For MathType work, keep named formula rectangles reserved but complete the panel, module, anchor, connector, arrowhead, and boundary pass first. Run a structure-only render and numeric route audit before opening MathType. Insert and edit formulas only after the structural geometry passes, then run a formula-only render and object validation. Never use formula editing as a reason to postpone fixing a sloped connector.
+| Time | Work |
+|---|---|
+| 0:00–0:20 | Classify complexity, reuse the contract, and decide which roles are nonempty. |
+| 0:20–2:00 | Run text/assets and arrow semantics in parallel while the global agent establishes the numeric skeleton. |
+| 2:00–5:00 | Build the complete non-connector PPT once; do not export an intermediate preview. |
+| 5:00–6:30 | In one PowerPoint session, apply native crops, mixed-script fonts, exact routes, arrowheads, z-order, and final text-box buffers. |
+| 6:30–8:00 | Save once, render once, run `fast-ppt-audit.ps1` once, repair only blocking failures in the same session, and deliver. |
 
-Maintain one authoritative structured manifest with four views: route ledger, four-class object/asset inventory, occupied-rectangle layout map, and reference coverage. Store shared IDs, coordinates, names, counts, classes, directions, path character, anchors, and completion status once; derive the four views from those fields instead of creating four repetitive narrative files. The coverage view must still assign an ID to every visible non-text/formula element and record its count, approximate source rectangle, class, direction/orientation, curve/straight character, output object name, and completion status. Update the manifest in one batch after a correction invalidates its geometry.
+Use one PowerPoint process for the entire finalization pass. Do not open separate sessions to inspect pictures, apply crops, add routes, fix text, export the preview, and save. Collect picture indices, text metrics, route counts, and file validation before closing that one process.
 
-## Reconstruct host-centered complex motifs
+For the base construction:
 
-Apply this procedure to cycles, circular arrows, petals, radial icons, orbit diagrams, brackets, decorative frames, and other complex motifs that surround a text block, image, formula, node, or central symbol:
+- Export the editable PPTX only. Do not render the artifact-tool first draft.
+- Reserve 5% extra width for single-line labels and titles before construction.
+- Create raster placeholders at their final rectangles, then apply native PowerPoint `PictureFormat.Crop` in the finalization session.
+- Add all route records in one batch from explicit waypoints after geometry freezes.
+- Apply fonts, crops, routes, and z-order in the same batch.
 
-1. **Identify the host before drawing.** Decide which central object carries the meaning and which objects merely surround, point to, frame, or repeat around it. Record the host, parent panel, surrounding members, labels owned by each member, reading order, direction, and intended symmetry.
-2. **Classify and split the members.** Assign every non-text/formula member to one of the four construction classes. If a complex raster or generated artwork contains several independently movable arrows or icons, split it into one tightly cropped transparent asset per semantic member. Never flatten the host, editable labels, ordinary connectors, and surrounding members into one composite image.
-3. **Measure visible content rather than file rectangles.** For each raster member, record the alpha/content bounds and visual center after transparent padding is excluded. Use those visible bounds for spacing, mirroring, and alignment.
-4. **Place the host first.** Fix the host's final font, dimensions, visible center, and safe clearance. Set that visual center as the motif's group center. Do not infer the group center by averaging already scattered surrounding components.
-5. **Derive the orbit numerically.** Place each member from the same group center using its reference angle or side, visible edge-to-host clearance, orientation, and clockwise/counter-clockwise order. Compute the member offset from its visible-content center, not from its raw image-frame center. Use equal radii or equal visible clearances for peers unless the reference deliberately varies them.
-6. **Place member labels with their owner.** Position each editable label relative to the visible arrow, icon, or host it describes. Keep the label clear of arrowheads, curves, neighboring members, and the host. Move the member-plus-label unit together.
-7. **Validate the internal motif before panel placement.** Check the host center, orbit balance, repeated gaps, direction, curve/straight character, z-order, and outer visible bounds. Only after this passes, center or align the complete logical group inside its parent panel.
-8. **Move the logical group as one transform.** Preserve independent editability, but when the motif must move or scale, apply the same translation or derived scale to the host and all surrounding members. Do not independently nudge orbiting members after group geometry is locked.
-9. **Add logical connectors afterward.** Keep ordinary straight and elbow arrows as single native PowerPoint connectors with their arrowheads on the same object. Preserve stylized or irreducible curves as one native curve or one independently placed raster component per arrow. A source curve remains curved and a source straight route remains straight.
-10. **Freeze structure before formulas.** Render and inspect the frames, host-centered motifs, modules, anchors, and connectors first. Correct alignment and route geometry before inserting or editing MathType objects.
-11. **Audit the saved PPT by object identity.** Compare the expected and actual counts of placed raster components, nonzero media files, native connectors, connector arrowheads, host/member names, and repeated shapes. Confirm axis-locked routes numerically and inspect the rendered page at whole-page and local scale.
+Render only the finalized slide. If that render exposes a blocking failure, modify the existing objects before closing PowerPoint and overwrite the same preview. Do not generate a new structural draft.
 
-Treat the host and surrounding members as a named logical layout group even when PowerPoint grouping would interfere with connector attachment or independent editing. Preserve stable object names so a later correction can move the entire group deterministically.
+Run `scripts/fast-ppt-audit.ps1` as the default final check. Run `slides_test.py` or another full secondary audit only when the fast audit fails, cannot inspect the deck, or the user explicitly requests high assurance. Never run both by default.
 
-## Use the fast deterministic path
+On Windows, resolve the current user home once from the environment and keep `HOME`/`USERPROFILE` consistent before presentation-workspace setup. This prevents the artifact runtime from being rediscovered under the current drive. Never hard-code the resolved home in the skill or generated scripts.
 
-For a dense reconstruction, MathType figure, connector-heavy framework, or user-requested multi-agent workflow, read [references/performance.md](references/performance.md) before construction and use it as the default execution plan. Cache environment smoke tests by host and runtime version, combine the four records into one manifest, assign every object its final construction backend before authoring, create one authoritative structural draft, and batch fixes on that same PowerPoint.
+## Run one compact intake and portable preflight
 
-Use multi-agent collaboration for dense figures or whenever the user requests it. Start bounded analysis agents in parallel for: (1) exact text and formula transcription, (2) four-class inventory and component splitting, and (3) route, anchor, axis, and layout auditing. The primary agent owns the manifest merge and is the only agent allowed to create or modify the authoritative PPT. Agents must return compact structured records with stable IDs and coordinates, not independent slide files or long narrative reports. Continue environment preflight and reusable-template preparation while the agents work, then join once before authoring. Never run the same analysis sequentially through several agents.
+Reuse values already stated in the current request or conversation. Ask at most one compact confirmation only for missing, contradictory, or result-changing choices:
 
-By default, permit only two full-slide renders: one low-resolution structure render before formulas and one final PowerPoint render after formulas. Add a render only when a recorded QA failure cannot be resolved numerically. Keep one PowerPoint application and one target presentation session for post-processing, rendering, object QA, and MathType work whenever the tools allow it. Complete crops, freeforms, connector normalization, and all other structural or OOXML post-processing before inserting MathType objects; after formula insertion, do only formula fitting, saving, combined validation, and the final render.
+- master/canvas and orientation;
+- Chinese and Latin fonts plus size tokens;
+- formula technology and whether fallback is allowed;
+- wording-preservation boundary and reference-fidelity level;
+- requested outputs.
 
-## Use the bundled MathType tool
+Do not ask the user to reconfirm an explicit value. Content extraction and visual classification may start while a nonblocking choice is unresolved; only geometry that depends on that choice must wait.
 
-When the confirmed formula contract selects MathType, read [references/mathtype-tool.md](references/mathtype-tool.md) and call [scripts/mathtype-ppt.ps1](scripts/mathtype-ppt.ps1). Do not rely on an unverified manual paste or a formula screenshot.
+Resolve this skill from the directory containing `SKILL.md`. Never hard-code a username, drive letter, Codex home, repository path, MathType executable, or installation path. Treat `references/`, `scripts/`, and `agents/` as optional helpers.
 
-Treat the bundled script and its documented `Equation.DSMT4` interface as the permanent MathType connection for this skill. Do not search the registry, rediscover the ProgID, or invent a new insertion method during ordinary figure production. Investigate the installation only when the tool's `-Action detect` fails.
+Run capability detection once per task:
 
-Use the tool in this order:
+1. Record the available PowerPoint-writing surface.
+2. Run `scripts/portable-preflight.py` when present; otherwise perform the equivalent minimal check.
+3. When MathType is requested, confirm the visible PowerPoint MathType/WIRIS/Design Science ribbon add-in once and record whether `Equation.DSMT4` is registered.
+4. Do not repeat capability, registry, add-in, or path discovery for each formula or each render.
+5. Do not stop because an optional helper is absent. Use the self-contained workflow below.
 
-1. Run `-Action preflight` before figure construction and stop if MathType or a usable PowerPoint application is unavailable.
-2. Reserve and name every formula rectangle during the joint occupancy stage.
-3. Run `-Action insert` to create one genuine editable MathType OLE object per formula at the reserved PowerPoint coordinates.
-4. Run `-Action edit` for the named object and enter the formula through MathType. Use UI automation when unattended entry is required; do not assign ordinary PowerPoint text to an OLE equation.
-5. For UI automation, focus the equation body, select all, press Backspace to clear the selected equation, and only then enter the new content. This delete-before-input step avoids MathType treating the operation as a formula-clipboard paste and showing a "clipboard does not contain equation data" error. Save with `Ctrl+S`, then use `Ctrl+F4` to close the editor and return to PowerPoint.
-6. Return to PowerPoint so MathType updates the same embedded object, then run `-Action fit` with the reserved formula rectangle because MathType may expand the OLE object to its intrinsic size.
-7. Repeat edit and fit for every named formula in the same active PowerPoint/MathType session, then save and close the PPT once.
-8. Reopen the PPT once and run `-Action inspect-validate -ExpectedCount N`. Reject missing, substituted, off-slide, non-MathType, anomalously narrow, empty, or visibly compressed formula objects.
+## Coordinate five roles with one authoritative PPT
 
-Do not force a multiline MathType equation into a narrow portrait slot. Enlarge or relocate the reserved rectangle, or simplify the actual mathematical expression only when the confirmed content boundary permits it. A nonformula variable inventory may remain native editable PowerPoint text beside a compact MathType expression, but never split or replace a real formula across technologies without explicit user approval.
+Use multi-agent work when at least two responsibilities are nonempty and can proceed independently. The main agent is the **global layout agent** and the only writer of the authoritative PPT. Other agents must not edit that PPT.
 
-Keep stable `MATH_*` object names so later size, position, and collision adjustments target the same formula objects in the authoritative PPT.
+Treat these as responsibilities:
 
-## Apply the hard layout-priority contract
+1. **Global layout agent:** own the canvas, coordinate system, panel/module geometry, object names, z-order, merge, final render, and acceptance decision.
+2. **Text agent:** extract visible wording once and return final text records, typography tokens, wrapping rules, and measured occupied rectangles.
+3. **Formula agent:** create the formula ledger and, when appropriate, a separate editable MathType formula-bank PPT.
+4. **Complex-visual agent:** classify and prepare all crops, generated icons, transparent assets, and local raster exceptions in one batch.
+5. **Arrow-logic agent:** map semantic routes in parallel, then resolve exact anchors and orthogonal waypoints after the non-connector layout freezes.
 
-When fidelity conflicts with readability, apply this order without exception:
+For a complex task with four concurrency slots, run the global layout agent plus the three largest nonempty specialist roles first. As soon as one specialist finishes, reuse that slot for the remaining nonempty role. Start arrow semantic planning early; delay physical connector creation until layout freeze. For a fast-path task, prefer two productive specialists over four low-work agents.
 
-1. Eliminate accidental overlap and occlusion.
-2. Preserve strong, repeatable whitespace.
-3. Balance and align the complete composition.
-4. Preserve reference positions and local similarity.
+Use one-writer ownership:
 
-Treat text, formulas, frames, images, nodes, symbols, arrow shafts, arrowheads, connector labels, titles, panel boundaries, legends, and annotations as occupied geometry. A layout is not valid merely because each object fits inside its own bounding box. Measure and inspect clear edge-to-edge distance between unrelated occupied regions.
+- Specialists may read sources and create manifests, assets, or a test/formula-bank PPT.
+- Specialists must not open or mutate the authoritative PPT.
+- The global layout agent imports each specialist result once.
+- Do not create several competing full-slide drafts.
 
-Allow overlap only when it is a confirmed semantic construction in the source, such as an editable variable or symbol intentionally placed over a dataset image, or a node intentionally covering a continuous lower-layer path. For an intentional image overlay:
+Maintain one compact `figure-manifest.json` instead of three continuously updated prose ledgers. It must contain:
 
-- keep the overlay entirely inside the image's safe interior;
-- retain visible clearance from the image edge and every enclosing frame;
-- place the overlay above the image and verify legibility;
-- do not use the exception to justify text touching a border, arrow, unrelated icon, or neighboring module.
+- canvas, margins, fonts, size tokens, gap token, and output contract;
+- semantic object IDs, peer groups, rectangles, and z-layers;
+- text records and formula targets;
+- asset paths, crop rules, and target rectangles;
+- route records, anchors, waypoints, and arrowhead ends.
 
-Reserve a dedicated title band inside every colored panel or major container. The title band must not share occupied space with the first row of nodes, boxes, formulas, labels, or connectors. Give the title balanced clearance to the panel boundary and to the first content row; move the content group, not only the title, when the band is too tight.
+Specialists may use separate JSON/TSV files during parallel work, but the global agent merges them once. Do not rewrite the manifests after harmless visual nudges; update only changed coordinates or content.
 
-Treat labels on or near a line as a layout error unless the source explicitly uses the line as mathematical notation. Place connector labels, route names, and annotations above or below the route in a reserved label corridor. Keep the label clear of the line stroke, arrowhead, module border, and neighboring object. Text boxes must use no fill and no outline by default; use a filled or outlined text container only when the reference depicts a real labeled shape.
+## Follow the fixed time budget
 
-Place ordinary labels and formulas on the top z-order, but do not use z-order to hide a collision. Reflow the geometry first. Use z-order only for intentional semantic stacking: container at back, complete path next, overlay node or image next, and label at top.
+| Time | Work |
+|---|---|
+| 0:00–1:00 | Reuse/confirm the contract, run one capability preflight, establish canvas and stable object IDs. |
+| 1:00–2:00 | Launch text, formula, and complex-visual work; global agent builds the panel/module skeleton; prepare arrow semantics. |
+| 2:00–6:00 | Specialists produce text records, formula bank, assets, and logical route ledger while the global agent completes the non-connector layout. |
+| 6:00–8:00 | Freeze occupied rectangles and anchors; resolve final formula boxes and route waypoints. |
+| 8:00–11:00 | Merge text/assets/formulas once; add all connectors in one batch; apply z-order once. |
+| 11:00–12:30 | Run one automated object audit and export one whole-slide preview. |
+| 12:30–14:00 | Fix only reported blocking failures in the same PPT. Do not rebuild the structure. |
+| 14:00–15:00 | Re-run failed checks, save/reopen once, and produce only requested deliverables. |
 
-Use this mandatory construction order inside every module group:
-
-1. Lock the wording, font, size level, wrapping rule, symbols, icons, images, formulas, and permitted manual breaks.
-2. Measure the rendered bounds of every text, formula, symbol, node, image, arrowhead, and connector label together.
-3. Reserve non-overlapping occupancy rectangles for the complete group, including padding, title bands, symbol-to-label gaps, image clearances, formula clearances, and connector channels.
-4. Fit the complete peer group inside its parent and redistribute available whitespace.
-5. Create the parent, text, formula, graphic, and peer objects at the computed coordinates as one coordinated operation.
-6. Verify the complete group before adding connections; do not treat any one object category as a later afterthought.
-7. Add each continuous path as one native connector, line, curve, or polyline and keep its arrowhead on the same object; send it behind any overlay nodes. For every axis-locked route, inspect the actual connected endpoint coordinates after PowerPoint routing and require horizontal routes to satisfy `|BeginY - EndY| <= 0.25 pt` and vertical routes to satisfy `|BeginX - EndX| <= 0.25 pt`. If the check fails, move and realign the connected module or peer group, recompute its anchors, and reroute the same connector. Split a path only at a true branch, an independently attached endpoint, or after verifying that PowerPoint itself has no native primitive capable of the required geometry.
-
-Do not treat “text fits inside its own text box” as a completed layout check. Text can pass overflow tests and still cover a neighboring node, border, arrow, or label.
-
-Treat the construction order as a hard gate: understand the logic, fix the master and complete figure bounds, lock typography, lock wording, measure final text, derive box sizes, reserve all block rectangles, place the layout, and only then add connectors. Never create fixed boxes first and force text into them afterward.
-
-After the first complete render, freeze the editable draft and run a mandatory whole-figure convergence pass inside that same PowerPoint:
-
-1. Inspect the entire page for local crowding, unused voids, asymmetric visual weight, and inconsistent scale.
-2. Inspect every title band, text-to-border gap, text-to-line gap, image overlay, connector corridor, and neighboring module pair at 100–200%.
-3. Resolve collisions by directly moving or resizing the existing objects, redistributing the complete peer group, expanding its content-driven box, or rerouting the existing path.
-4. Recompute connectors after moving nodes; do not preserve a bad bend or split a route into independent line fragments merely to avoid re-layout.
-5. Export a new preview from the same PPT and repeat the local adjustments until no accidental collision, border adhesion, cramped arrow label, avoidable bend, or visually sticky gap remains.
-
-Prefer small coordinated movements that preserve alignment and logic. Do not independently nudge one peer, shrink one font, or shorten one arrow if the surrounding row or column can be rebalanced.
-
-## Iterate normal figure tasks
-
-Treat normal figure production as a two-phase workflow:
-
-1. Generate one complete editable first draft containing all approved modules, text, formulas, images, symbols, and connections.
-2. Keep that draft open as the authoritative artifact. Inspect the rendered result, then directly move, resize, crop, reorder, or reroute its existing objects in PowerPoint or through PowerPoint object control. Export another preview after each micro-adjustment pass.
-
-Generate at most once for each confirmed structural design. Do not rerun the entire generator for overlap, whitespace, title-band, label-position, icon-scale, image-crop, arrow-routing, text-box-boundary, or z-order corrections. Perform all such corrections in the same PPT. Create a new structural version only when the user explicitly changes the master, system logic, module hierarchy, or content inventory; generate that new version once, freeze it, and resume direct object-level refinement.
-
-Preserve stable object names and identities during refinement so collision reports and subsequent adjustments target the same objects. Treat the source script only as a one-time initial-construction tool for the current structural version, never as the normal mechanism for visual iteration.
-
-Apply an “exactly one counted generation attempt per round, followed by read-only QA” restriction only when the user explicitly requests controlled batch-adaptation training and the frozen round contract requires it. In that mode, carry fixes into the next round and regenerate the complete test set. Never transfer that training restriction to an ordinary user figure task.
-
-## Analyze the materials
-
-Inventory the supplied files before reading deeply. Prefer `rg --files` and targeted searches for large folders. Read the relevant framework text, chapter outline, formulas, papers, captions, and reference images.
-
-Before drawing, summarize the inferred design brief:
-
-- Figure title.
-- Main modules and submodules.
-- Logical flow and hierarchy.
-- Input/output relationships.
-- Key technical points.
-- Innovation highlights.
-- Validation or experimental platform when relevant.
-- Confirmed master, usable figure bounds, and intended figure aspect ratio.
-- Typography tokens and content-editing boundary.
-- Detected symmetry axes, repeated peer groups, and any justified asymmetry.
-
-For a chapter-level overview, include motivation, chapter structure, research route, methods, key technologies, innovations, and validation platform when supported by the source materials. If the evidence does not support an item, do not invent it.
-
-When multiple reference figures are supplied, fuse their strongest layout, hierarchy, and color ideas into one coherent design. Do not copy a single reference mechanically.
-
-## Design the figure
-
-Preserve all confirmed academic content. Improve layout rather than deleting modules or shrinking text aggressively.
-
-Use these construction rules:
-
-- Build the diagram with native PowerPoint shapes, text boxes, and connectors. Do not flatten the whole figure into an image inside the PPT.
-- Start from the whole semantic object, not its visible fragments. Prefer one native PowerPoint rectangle, circle, diamond, star, line, elbow connector, curve, or polyline over a hand-built approximation.
-- Before drawing any arrow, confirm the source and destination and therefore the arrowhead direction. Only then choose straight, elbow, curve, or diagonal geometry and set arrowhead type, length, width, and line weight. Do not add an arrowhead to an undirected source line.
-- Use one native PowerPoint object for the complete ordinary arrow. For a straight route use one native straight connector; for an orthogonal route use one native elbow connector; for a curved route use one native curve/curved connector; for a fixed-waypoint route use one native polyline/freeform with its `BeginArrowheadStyle` or `EndArrowheadStyle` set on that same object. Never use an independent triangle, chevron, or other shape as the arrowhead of a logical route.
-- Classify every reference path before drawing it. Reproduce a source curve with a native PowerPoint curve or arc, a source folded path with one native elbow connector or polyline, and a source straight path with one straight line or connector. Never approximate a curve with straight segments or a folded path with several independent lines when one native object can express it.
-- Prefer straight horizontal or vertical routing, then a balanced orthogonal fold, and only then a diagonal when the diagonal carries real meaning. Align anchors before selecting the route.
-- Treat horizontal and vertical as exact geometric constraints, not visual approximations. A horizontal connector must use one shared y-coordinate at both semantic anchors; a vertical connector must use one shared x-coordinate. When the intended anchors are not co-axial, move the connected module or the complete aligned peer group until they are. Do not rotate or slope the connector to hide a few pixels of layout error.
-- Keep one continuous path as one object even when a factor, node, diamond, star, or other shape visually interrupts it. Draw the complete path on a lower z-order and place the intervening shapes above it. Occlusion is not a reason to split the path.
-- Split a path only at a true branch, a junction with multiple semantic destinations, or independently attached endpoints. At a true branch, represent each unbranched run with the fewest native objects and place any junction marker above the lines.
-- Establish z-order before construction: container backgrounds and frames at the back, continuous paths and connectors above them, factor/node shapes above paths, and labels plus annotations at the top. Verify that the overlay shape, not a white gap or manually shortened line, creates the visible interruption.
-- Confirm whether every frame and peer shape uses a solid or dashed border before creating it. Apply the same border form to the matching main-diagram and legend representations.
-- Treat repeated bars, dots, diamonds, and other matrix-like elements as one peer system. Lock one native shape type, size, interval, baseline, border form, and generation rule before placing the repeated set.
-- Keep every block, label, formula, legend, boundary, and connector complete and within the canvas.
-- Use native PowerPoint connectors with both endpoints genuinely attached when a straight or elbow connector can reproduce the intended route without uncontrolled rerouting. When a source curve or a fixed-waypoint folded route requires one native curve or freeform/polyline, place its endpoints exactly on the intended boundary anchors, name the path, and recompute its endpoints after either module moves.
-- Treat an authoring library limitation as a tooling problem, not as proof that PowerPoint lacks the primitive. If the current API cannot set a native line end or create the required connector, use another PowerPoint-capable route such as supported OOXML editing or PowerPoint automation. Do not emulate a supported PowerPoint arrow with a separate line shaft and triangle.
-- Prefer a single horizontal or vertical connector whenever endpoints can be aligned. Use orthogonal elbows for branches. Use diagonal connectors only when the diagonal direction carries real meaning.
-- Align connector endpoints before choosing a connector type; do not introduce a bend to compensate for a few pixels of center misalignment.
-- Prefer actual connection sites on the visible semantic shapes. Use an invisible proxy anchor only when the visible PowerPoint primitive cannot expose the required site, and place that proxy exactly on the intended visible boundary point and recorded shared baseline. Never calculate peer proxy anchors independently from different bounding-box centers when the routes belong to one horizontal or vertical row.
-- For a single folded route, use one native elbow connector or one native polyline and keep its bend location balanced. Use explicit waypoint anchors and multiple attached segments only for a true branch or when one native object cannot attach the required independent endpoints. Do not rely on uncontrolled automatic rerouting.
-- Reserve connector and connector-label corridors before placement. Reject any connector segment that intersects text, a formula, a picture label, or another reserved object rectangle.
-- Keep every route label in its own above-line or below-line corridor. Never center ordinary text directly on a connector, panel border, divider, or arrow shaft.
-- Never attach a logical flow arrow to a nearby annotation text box when the intended endpoint is a module.
-- Route connectors behind text and keep text above shapes when necessary.
-- Use consistent line widths and medium arrowheads. Default to 1.0–1.2 pt unless the reference style requires otherwise.
-- Preserve a clearly visible arrow shaft. Never let a medium arrowhead consume nearly the entire connector; size boxes, nodes, and gaps together and follow the routed-length checks in the quality checklist.
-- Build decorative rules, ticks, dividers, and other nonlogical linework as thin rectangles or closed freeforms rather than `AddLine` objects that PowerPoint may reopen as connectors.
-- Use distinct anchors for scientific vectors whose endpoints lie inside the same enclosing shape so PowerPoint does not collapse them into zero-length same-shape connectors.
-- Build the layout from numeric guides: master margins, figure bounds, symmetry axes, panel rectangles, peer sizes, and repeated gaps. Do not position repeated or mirrored objects independently by eye.
-- Use uniform rows, columns, module sizes, gaps, and page margins. Distribute whitespace evenly; avoid both crowded clusters and large unused voids.
-- Normalize the apparent scale of peer icons, images, nodes, formulas, and labels before drawing connectors. Reject a peer group whose elements have inconsistent visual weight or whose local stacking creates a dense knot.
-- Except for confirmed hard links that must touch their anchors, require visible whitespace between every symbol, label, frame, legend marker, annotation, and unrelated shape. Apply one gap token across peer items and measure edge-to-edge clearance, not center distance.
-- Keep legend letters and labels visibly clear of their enclosing frame. Move the complete peer row or redistribute its contents when border clearance is tight; do not nudge one letter independently.
-- For a small label placed in the channel between two large panels, calculate the channel first and give the label equal clearance to both panels when the structure is symmetric. If the clearance is too small but the master has spare room, move the paired panel groups apart symmetrically.
-- Center sidebars against their associated panels. If a sidebar is taller than its panel, extend it equally beyond both ends; mirror opposite sidebars with the same rule.
-- Keep at least 2.5–3 mm internal padding around text. Increase a box or adjust wrapping before reducing font size.
-- Determine text-box width and height from measured text bounds before inserting text. Never fill text first and then stretch or distort the enclosing shape.
-- Disable unexpected PowerPoint text-box auto-sizing before freezing coordinates. After the first render, compare the text box's actual `Shape.Height` with `TextRange.BoundHeight`; if PowerPoint retained an oversized default text-box height, set `TextFrame2.AutoSize` to none, shrink the shape to the rendered text height plus a safety allowance, and then reposition it. Do not assume the requested text-box height survived PowerPoint rendering.
-- Treat a symbol and its adjacent explanation as a composite layout unit. Compute `symbol width + safety gap + measured label width`; start the label after the symbol's actual right or lower boundary, never from an approximate center or nominal coordinate. Use a visible 4–6 pt gap by default and apply the same gap across peer legend items.
-- Before drawing a row or column, sum all occupied widths or heights, peer gaps, and parent padding. If the total does not fit, change the wording, module dimensions, or hierarchy before creating shapes.
-- When unused space exists beside a crowded group, redistribute the whole peer group into that space before shrinking fonts, narrowing gaps, or allowing overlap. Preserve ordered alignment and equal peer gaps during the redistribution.
-- Require every retained subordinate panel to contain at least one source-mapped mechanism, relation, or approved tightly scoped local image. An empty decorative frame is not a valid reconstruction.
-- Keep block labels on one line whenever they fit with the required padding and a reasonable box width. Manual line breaks are permitted only for titles or content deliberately designed as exactly two lines; break at a semantic boundary and balance the two visual widths.
-- For body text that naturally exceeds two lines, keep one continuous paragraph, allow wrapping from the fixed width, and apply full justification. Do not insert manual line breaks to imitate justification.
-- Never leave one or two Chinese characters, a lone Latin variable, a subscript, an operator, or punctuation alone on a line. Fix the content width, wording, or box geometry while preserving the confirmed hierarchy.
-- Center a title over its narrative column or left-align it to the same text edge; use one rule across the peer group. Apply the same paragraph alignment and usable width to peer descriptions so their left/right padding is equal.
-- In addition to ordinary measurement clearance, require titles and peer labels to retain at least 10 pt spare inner width and 8 pt spare inner height in the target PowerPoint renderer. Before freezing geometry, serially probe the longest title and the widest and tallest peer labels with the final fonts and sizes.
-- Optimize box widths and connector gaps jointly. Widening a box to fix wrapping must not reduce the adjacent connector to an arrowhead-only stub.
-- Compute rounded-corner radii from the shorter side of each box and keep the normalized radius consistent within a peer group. Avoid pill-shaped corners unless the reference or hierarchy calls for them.
-- Use only the user-confirmed number of font-size levels. Default to two restrained levels; use three or another count only when explicitly confirmed. Keep all sizes inside the confirmed range.
-- When the active A4 batch contract specifies 12 pt and 14 pt, use exactly those two sizes. Do not silently generalize that batch-specific lock to a different confirmed contract.
-- Apply the user-confirmed mixed-script font policy. If no policy is supplied after confirmation, default to Times New Roman for English, numbers, Latin variables, abbreviations, operators, and formulas, and 宋体 for Chinese.
-- Keep formulas clear, ungarbled, and editable according to the confirmed formula contract. When MathType is selected, create genuine editable MathType OLE objects, preserve consistent baseline and apparent size, and verify the saved objects remain MathType-editable in PowerPoint. When Office-native equations are selected, use Office-native editable equations; otherwise use grouped editable text with superscripts, subscripts, fraction bars, brackets, and tables. Never substitute a formula screenshot unless the user explicitly authorizes a documented raster exception. Never silently mix formula technologies.
-- Match the provided palette and visual language while maintaining academic restraint, adequate contrast, and print readability.
-
-## Handle complex visual elements by scope
-
-Classify every non-native visual before drawing and preserve its aspect ratio:
-
-- Never paste the complete reference framework as a full-page or full-figure screenshot.
-- For a large composition containing people, drones, sensors, computers, controllers, or other separable physical components, extract each component as an independent transparent object. Rebuild labels, dimensions, fields of view, module frames, and ordinary connectors natively in PowerPoint.
-- Permit a tight crop for a small, subordinate, inseparable complex panel. Do not let that crop expand to include separable labels, boxes, legends, or major logical structure.
-- Permit a lossless tight crop for a small blurry experimental plot, but do not enlarge it beyond a safe size, invent detail, or change its curves, axes, colors, or measurements.
-- Faithfully crop and conservatively enhance real scenes, vehicles, people, hardware, RGB or thermal views, and experimental photographs. Do not redraw or semantically reinterpret them.
-- Recreate small semantic icons as new transparent assets. Moderate detail differences are acceptable, but preserve their meaning, direction, dominant colors, silhouette, and visual weight.
-- Render simple stars, circles, diamonds, squares, checks, and crosses as native PowerPoint shapes whenever semantics allow. Do not encode them as Unicode text merely for convenience. Do not render the arrowhead of a logical route as an independent shape; configure it on the native line, connector, curve, or polyline object.
-- Generate irreducible local raster assets at no less than twice their final placed pixel dimensions, with transparency when appropriate. Reject blur, halos, loose crops, stretching, and source-semantic drift.
-
-Use shape-center anchors as the first choice. Align center points before drawing arrows so paired connectors are exactly horizontal or vertical and symmetric spokes have equal routed lengths. If the natural centers are not co-axial, move the modules or complete peer group; do not preserve their approximate positions and accept a tilted connector. Recompute the surrounding boxes rather than accepting any visible or numeric slope.
-
-Reject these recurring failure modes:
-
-- Surrounding arrows, icons, petals, or labels are positioned before identifying their central host, so the completed motif has no stable group center.
-- Raster members are aligned by their rectangular frames even though unequal transparent padding shifts their visible centers.
-- One orbiting member is nudged independently after the host-centered geometry is locked, breaking radius, clearance, angular order, or symmetry.
-- A complete circular-arrow or radial motif is pasted as one image even though its arrows, icons, host, or labels must remain independently movable.
-- A node or oval and its explanatory text occupy intersecting rectangles even though empty space exists elsewhere in the parent panel.
-- A label is positioned relative to a symbol's left coordinate or visual center and therefore intrudes into the symbol's actual width.
-- Text passes the overflow check but overlaps another text box, frame, connector, node, or legend mark.
-- A logical arrow is decomposed into a line shaft plus an independent triangle, chevron, or arrowhead shape even though PowerPoint supports the route as one native line, connector, curve, or polyline.
-- A route classified as horizontal has unequal endpoint y-coordinates, or a route classified as vertical has unequal endpoint x-coordinates, even when the slope is visually small.
-- Proxy anchors for one peer row are derived from different object bounding boxes instead of one recorded shared baseline, producing near-horizontal or near-vertical connectors.
-- One peer is moved independently to fix a collision, leaving unequal gaps or a broken symmetry pattern.
-- Fonts are reduced or manual line breaks are added before testing whether available whitespace can absorb the content.
-- Shapes are drawn first and content is forced into them without a measured occupancy preflight.
-
-For a thesis figure, default to an A4-compatible canvas and size the final Word insertion to the usable text width. For journal or presentation use, adapt the aspect ratio only after confirming the target.
-
-## Produce the three deliverables
-
-Create exactly these final artifacts unless the user explicitly changes the contract:
-
-1. Editable PowerPoint (`.pptx`) containing native, independently editable objects.
-2. High-resolution PNG suitable for print, at least 300 dpi and preferably at least 2800 px on the long edge.
-3. Word figure version (`.docx`) with the figure, caption, and legend placed together in a frameless, locked-anchor figure container when supported.
-
-Keep temporary renders, scripts, and diagnostics in a separate build directory. Leave exactly the three deliverables in the final output directory. Ensure all three versions have the same visual result.
-
-## Validate and refine
-
-Read [references/quality-check.md](references/quality-check.md) before validating any generated figure. Perform both object-level checks and rendered-image inspection. If any check fails, revise the source PPT, export again, and repeat until the figure passes.
-
-For connector-heavy figures, run [scripts/ppt-axis-audit.ps1](scripts/ppt-axis-audit.ps1) after the structure-only pass. Supply the names of all horizontal and vertical straight connectors. Require the reported axis delta to stay within `0.25 pt`, require both endpoints to remain connected, and require an end arrowhead for directed routes.
-
-Do not finish after merely generating files. Do not report a connector as attached based only on visual proximity. Do not claim the PPT is editable if it contains only a full-slide raster image.
+If one asset or formula is still unresolved at minute 6, continue the rest of the figure and repair only that item at merge time. Never restart completed parallel work because one item failed.
+
+## Build the non-connector layout once
+
+Inventory only the visible and logically necessary content. Avoid deep-reading unrelated files. Create stable IDs before construction and use numeric guides for margins, panels, rows, columns, symmetry axes, and peer gaps.
+
+Place all panels, modules, text placeholders, formula placeholders, images, icons, labels, legends, and reserved connector corridors before drawing logical connectors. Normalize peer sizes and align the semantic whole object, not a visible fragment.
+
+Use native PowerPoint shapes for logical nodes, frames, legends, ordinary symbols, labels, and editable text. Keep backgrounds at the back, route shafts above backgrounds, modules and nodes above routes, and labels/formulas at the top.
+
+Use one default external `gap_token = 5 pt` unless the confirmed reference requires another value. Inflate each ordinary text/formula rectangle by that token for composition-level collision testing. Do not solve crowding by shrinking below the confirmed font size when usable space exists elsewhere.
+
+Freeze the first complete non-connector layout. Ordinary spacing, z-order, crop, caption, or route corrections must edit the same PPT. Regenerate only when the user changes the canvas, hierarchy, semantic logic, or content inventory.
+
+## Use the one-pass parallel text protocol
+
+The text agent reads each source once and returns one record per visible text instance. Use this minimal schema:
+
+```json
+{
+  "id": "TXT_MODULE_TITLE",
+  "source_text": "Original wording",
+  "display_text": "Original wording",
+  "change_reason": null,
+  "role": "module_title",
+  "peer_group": "module_titles",
+  "language": "en",
+  "size_token": "title",
+  "alignment": "center",
+  "wrap_policy": "single_line",
+  "allocated_width_pt": 110,
+  "occupied_rect": [100, 40, 126, 30],
+  "qa_flags": []
+}
+```
+
+Preserve `source_text` and `display_text`; never silently shorten or paraphrase. Record an authorized change reason. Treat formula content as a formula placeholder and do not measure it as ordinary text.
+
+Measure ordinary text once in one batch using final fonts, final sizes, the target PowerPoint renderer, and allocated widths. Disable unexpected AutoSize. Record rendered bounds, reject font substitution and overflow, and derive the text box with one consistent internal padding token. Permit a second measurement only if wording, font, size, renderer, or allocated width changes.
+
+Use semantic manual breaks only for deliberately two-line titles or labels. Let body text wrap naturally. Flag orphan Chinese characters, isolated variables/operators, and punctuation. The global agent, not the text agent, runs the final inflated-rectangle collision test after all content is merged.
+
+## Use the fast parallel MathType formula bank
+
+When fewer than five formulas are required, insert them directly through the confirmed PowerPoint MathType ribbon workflow. When five or more are required, use a dedicated formula agent and a separate `mathtype_formula_bank_test.pptx`.
+
+Create `formula-targets.json` once with ordered target names, TeX/content, slide numbers, reserved rectangles, and intended apparent size. The main agent places named placeholders and continues building without waiting.
+
+Give the formula agent exclusive ownership of desktop PowerPoint UI during the batch. In one PowerPoint session:
+
+1. Confirm the MathType ribbon once and insert one smoke-test formula.
+2. Verify that the result is editable; when exposed, require `OLEFormat.ProgID = Equation.DSMT4`.
+3. Insert all formulas into one labeled grid bank in ledger order.
+4. Rename every equation to its exact target name.
+5. Save at controlled checkpoints, not after every formula.
+6. Mark an individual failed formula and continue; repair failures at the end.
+
+After the bank and main layout are complete, open both in the same PowerPoint process and copy all formulas by name in one merge pass. Scale each equation proportionally into its reserved rectangle, center it, preserve its name, then remove the placeholder.
+
+Run the default fast validation once: expected count, unique names, positive dimensions, slide bounds, editable OLE type/ProgID when exposed, and successful reopen of the bank and merged PPT. Reopen the first, middle, and last formulas through the MathType ribbon. Reopen every equation only when the user explicitly requests high assurance or a sample fails.
+
+If the ribbon cannot be operated, use direct OLE only as a compatibility route when `Equation.DSMT4` is registered. Use Office-native equations or grouped editable math text only when the user authorizes fallback. Never use a formula screenshot without explicit permission.
+
+Read `references/mathtype-tool.md` only when MathType is selected. Use `scripts/mathtype-ppt.ps1` when present for detection and saved-object validation.
+
+## Prepare complex visuals in one batch
+
+Classify each non-text visual in no more than 20 seconds:
+
+- **Native:** use native PowerPoint when the object needs logical editing or can be expressed with at most three standard primitives.
+- **Crop:** use one tight source crop for an inseparable subordinate photo, plot, scene, hardware view, or complex panel.
+- **Generate:** generate only when no usable source exists, the asset carries necessary meaning, and native reconstruction would exceed 60 seconds.
+
+Prepare all crops, resizes, background removals, and generated assets together while the main layout is built. Reuse an accepted asset; do not regenerate it for positioning changes. Cache derived assets in the build directory with stable names.
+
+Require transparency only when the silhouette must overlap another object. Attempt background removal once. If cleanup would exceed 45 seconds or leaves a visible halo, use a clean rectangular crop inside a native frame.
+
+A local raster is acceptable only when it is independently selectable and replaceable and contains no editable prose, formula, axis/tick label, logical connector, major module frame, or route label. Never rasterize the complete figure. Keep captions, labels, frames, and logical connections native.
+
+If an asset is unusable by minute 6, replace it with a source crop in a native frame, a cached asset, or a neutral native symbol. Do not let one decorative asset block delivery.
+
+## Plan arrow logic in parallel and draw once
+
+The arrow-logic agent may analyze semantics while layout proceeds, but it must not draw provisional connectors. Return one route record per independently directed arrow:
+
+```json
+{
+  "id": "R01",
+  "source": "INPUT",
+  "target": "MODULE_A",
+  "source_anchor": "right",
+  "target_anchor": "left",
+  "arrow_end": "target",
+  "kind": "straight",
+  "waypoints": [[120, 80], [180, 80]],
+  "segment_axes": ["H"],
+  "line_pt": 1.1,
+  "dash": "solid",
+  "z_layer": "route",
+  "min_span_pt": 12
+}
+```
+
+Split every directed chain into separate routes when multiple arrowheads exist. Keep independent buses separate unless the source contains a true merge node. Record curves as curves and folded routes as one native elbow/polyline.
+
+After the global agent freezes the non-connector layout, resolve named semantic anchors and exact waypoints once. Do not use a generic shape-center connector when the source specifies a boundary port or axis.
+
+Before PowerPoint insertion, require:
+
+- horizontal segment: `y1 == y2`;
+- vertical segment: `x1 == x2`;
+- orthogonal route: every segment is horizontal or vertical;
+- endpoint lies on the declared semantic boundary anchor;
+- arrowhead is on the ledger-declared destination end;
+- shaft and arrowhead envelopes avoid inflated text/formula/image rectangles and unrelated modules;
+- ordinary routed span is at least 12 pt;
+- route IDs, source/target pairs, and visible arrow count are complete and nonduplicated.
+
+Correct invalid JSON or frozen geometry before opening PowerPoint; never render a known diagonal or semantically misattached route for diagnosis. Add all route shafts and arrowheads in one batch and apply z-order once.
+
+## Validate once and stop
+
+Read `references/quality-check.md` before final validation when it exists. Use its fast gate, not an open-ended inspection loop.
+
+When `scripts/fast-ppt-audit.ps1` exists, run it once against the authoritative PPT for slide bounds, text overflow, MathType count, and named `ROUTE_*` axis compliance. Treat its JSON as the initial failure list; do not repeat the same checks manually.
+
+Run one automated object audit for:
+
+- content and route count;
+- slide bounds and nonempty objects;
+- text overflow and font substitution;
+- inflated text/formula clearance;
+- route axis compliance, endpoint semantics, arrowhead end, and minimum shaft span;
+- formula count, names, technology, dimensions, and bounds;
+- raster aspect ratio and usable resolution;
+- file save/reopen integrity.
+
+Export one whole-slide preview. Inspect the whole composition and only connector-dense or audit-flagged regions at approximately 150%. Do not inspect every object repeatedly at 200–400%.
+
+Fix blocking failures only: missing/clipped content, unreadable text, wrong flow direction, avoidable diagonal routes, text/object overlap, broken formulas, out-of-bounds objects, or unusable files. Apply one targeted same-PPT repair pass and rerun only failed checks plus one final render.
+
+Stop when the automated gate has no blocking failures and the final render has no obvious collision or semantic error. Minor decorative, crop, icon-style, and pixel-level spacing differences do not trigger another iteration unless the user requested exact high assurance.
+
+## Produce only requested deliverables
+
+Do not create PNG or Word versions unless requested. If the user does not specify an output, deliver the editable PPTX and retain one QA preview only in the build directory.
+
+Keep temporary manifests, formula banks, renders, scripts, and diagnostics outside the final delivery directory. Open or parse each requested final file once and confirm it is nonempty. Do not claim editability when the deck is a full-slide raster image.
