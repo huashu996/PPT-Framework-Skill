@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('detect','insert','edit','inspect','validate')]
+    [ValidateSet('detect','preflight','insert','edit','fit','inspect','validate','inspect-validate')]
     [string]$Action = 'detect',
 
     [string]$PptPath,
@@ -126,6 +126,65 @@ function Get-UniqueMathShapeName {
     }
 }
 
+function Get-UsablePowerPointApplication {
+    $application = $null
+    try {
+        $application = [Runtime.InteropServices.Marshal]::GetActiveObject('PowerPoint.Application')
+    } catch {}
+
+    if ($application -and $application.Presentations) {
+        return [pscustomobject]@{
+            Application = $application
+            OwnsApplication = $false
+            Source = 'active'
+        }
+    }
+
+    if ($application) {
+        try { [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($application) } catch {}
+        $application = $null
+    }
+
+    $application = New-Object -ComObject PowerPoint.Application
+    if (-not $application -or -not $application.Presentations) {
+        if ($application) {
+            try { $application.Quit() } catch {}
+            try { [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($application) } catch {}
+        }
+        throw 'PowerPoint COM returned an unusable application. Open PowerPoint once and rerun; the tool will attach to the active instance without closing unrelated presentations.'
+    }
+
+    return [pscustomobject]@{
+        Application = $application
+        OwnsApplication = $true
+        Source = 'new'
+    }
+}
+
+function Open-TargetPresentation {
+    param(
+        $Application,
+        [string]$Path,
+        [bool]$ReadOnly,
+        [bool]$WithWindow
+    )
+
+    foreach ($candidate in $Application.Presentations) {
+        if ([string]::Equals([string]$candidate.FullName, $Path, [StringComparison]::OrdinalIgnoreCase)) {
+            return [pscustomobject]@{
+                Presentation = $candidate
+                OpenedHere = $false
+            }
+        }
+    }
+
+    $opened = $Application.Presentations.Open($Path, $ReadOnly, $false, $WithWindow)
+    return [pscustomobject]@{
+        Presentation = $opened
+        OpenedHere = $true
+    }
+}
+
 $registration = Get-MathTypeRegistration
 if ($Action -eq 'detect') {
     Write-JsonResult ([pscustomobject]@{
@@ -143,17 +202,52 @@ if (-not $registration.Available) {
     throw "MathType OLE server '$MathTypeProgId' is not available. Run -Action detect first."
 }
 
+$pptContext = $null
+if ($Action -eq 'preflight') {
+    try {
+        $pptContext = Get-UsablePowerPointApplication
+        Write-JsonResult ([pscustomobject]@{
+            Action = 'preflight'
+            Success = $true
+            MathType = $registration
+            PowerPoint = [pscustomobject]@{
+                Source = $pptContext.Source
+                Version = [string]$pptContext.Application.Version
+                OpenPresentations = [int]$pptContext.Application.Presentations.Count
+            }
+        })
+    } finally {
+        if ($pptContext) {
+            if ($pptContext.OwnsApplication) {
+                try { $pptContext.Application.Quit() } catch {}
+            }
+            try { [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($pptContext.Application) } catch {}
+        }
+    }
+    return
+}
+
 $resolvedPptPath = Resolve-PresentationPath
+$effectiveAction = $Action
+if ($Action -eq 'inspect-validate') {
+    $effectiveAction = 'validate'
+}
 $ppt = $null
 $presentation = $null
 $leaveOpen = $false
+$ownsPpt = $false
+$openedPresentation = $false
 
 try {
-    $ppt = New-Object -ComObject PowerPoint.Application
+    $pptContext = Get-UsablePowerPointApplication
+    $ppt = $pptContext.Application
+    $ownsPpt = [bool]$pptContext.OwnsApplication
 
-    switch ($Action) {
+    switch ($effectiveAction) {
         'insert' {
-            $presentation = $ppt.Presentations.Open($resolvedPptPath, $false, $false, $false)
+            $openContext = Open-TargetPresentation $ppt $resolvedPptPath $false $false
+            $presentation = $openContext.Presentation
+            $openedPresentation = [bool]$openContext.OpenedHere
             if ($SlideNumber -lt 1 -or $SlideNumber -gt $presentation.Slides.Count) {
                 throw "SlideNumber $SlideNumber is outside 1..$($presentation.Slides.Count)."
             }
@@ -214,7 +308,9 @@ try {
                 throw '-ShapeName is required for -Action edit.'
             }
             $ppt.Visible = -1
-            $presentation = $ppt.Presentations.Open($resolvedPptPath, $false, $false, $true)
+            $openContext = Open-TargetPresentation $ppt $resolvedPptPath $false $true
+            $presentation = $openContext.Presentation
+            $openedPresentation = [bool]$openContext.OpenedHere
             if ($SlideNumber -lt 1 -or $SlideNumber -gt $presentation.Slides.Count) {
                 throw "SlideNumber $SlideNumber is outside 1..$($presentation.Slides.Count)."
             }
@@ -239,9 +335,60 @@ try {
             })
         }
 
+        'fit' {
+            if ([string]::IsNullOrWhiteSpace($ShapeName)) {
+                throw '-ShapeName is required for -Action fit.'
+            }
+            if ($Width -le 0 -or $Height -le 0) {
+                throw 'Width and Height must be positive reserved-rectangle dimensions.'
+            }
+            $openContext = Open-TargetPresentation $ppt $resolvedPptPath $false $false
+            $presentation = $openContext.Presentation
+            $openedPresentation = [bool]$openContext.OpenedHere
+            if ($SlideNumber -lt 1 -or $SlideNumber -gt $presentation.Slides.Count) {
+                throw "SlideNumber $SlideNumber is outside 1..$($presentation.Slides.Count)."
+            }
+            $shape = $presentation.Slides.Item($SlideNumber).Shapes.Item($ShapeName)
+            $actualProgId = [string]$shape.OLEFormat.ProgID
+            if ($actualProgId -ne $MathTypeProgId) {
+                throw "Shape '$ShapeName' is '$actualProgId', not '$MathTypeProgId'."
+            }
+
+            $currentWidth = [double]$shape.Width
+            $currentHeight = [double]$shape.Height
+            if ($currentWidth -le 0 -or $currentHeight -le 0) {
+                throw "Shape '$ShapeName' has a non-positive size."
+            }
+            $scale = [math]::Min($Width / $currentWidth, $Height / $currentHeight)
+            $newWidth = $currentWidth * $scale
+            $newHeight = $currentHeight * $scale
+            $shape.LockAspectRatio = -1
+            $shape.Width = $newWidth
+            $shape.Left = $Left + (($Width - [double]$shape.Width) / 2)
+            $shape.Top = $Top + (($Height - [double]$shape.Height) / 2)
+            $presentation.Save()
+
+            Write-JsonResult ([pscustomobject]@{
+                Action = 'fit'
+                Success = $true
+                PptPath = $resolvedPptPath
+                Shape = [pscustomobject]@{
+                    Slide = $SlideNumber
+                    Name = [string]$shape.Name
+                    ProgId = $actualProgId
+                    Left = [math]::Round([double]$shape.Left, 3)
+                    Top = [math]::Round([double]$shape.Top, 3)
+                    Width = [math]::Round([double]$shape.Width, 3)
+                    Height = [math]::Round([double]$shape.Height, 3)
+                }
+            })
+        }
+
         'inspect' {
-            $presentation = $ppt.Presentations.Open($resolvedPptPath, $true, $false, $false)
-            $items = Get-MathTypeShapeInfo $presentation
+            $openContext = Open-TargetPresentation $ppt $resolvedPptPath $true $false
+            $presentation = $openContext.Presentation
+            $openedPresentation = [bool]$openContext.OpenedHere
+            $items = @(Get-MathTypeShapeInfo $presentation)
             Write-JsonResult ([pscustomobject]@{
                 Action = 'inspect'
                 Success = $true
@@ -252,8 +399,10 @@ try {
         }
 
         'validate' {
-            $presentation = $ppt.Presentations.Open($resolvedPptPath, $true, $false, $false)
-            $items = Get-MathTypeShapeInfo $presentation
+            $openContext = Open-TargetPresentation $ppt $resolvedPptPath $true $false
+            $presentation = $openContext.Presentation
+            $openedPresentation = [bool]$openContext.OpenedHere
+            $items = @(Get-MathTypeShapeInfo $presentation)
             $errors = @()
 
             if ($ExpectedCount -ge 0 -and $items.Count -ne $ExpectedCount) {
@@ -283,7 +432,7 @@ try {
 
             $valid = $errors.Count -eq 0
             Write-JsonResult ([pscustomobject]@{
-                Action = 'validate'
+                Action = $Action
                 Success = $valid
                 PptPath = $resolvedPptPath
                 Count = $items.Count
@@ -297,10 +446,10 @@ try {
     }
 } finally {
     if (-not $leaveOpen) {
-        if ($presentation) {
+        if ($presentation -and $openedPresentation) {
             try { $presentation.Close() } catch {}
         }
-        if ($ppt) {
+        if ($ppt -and $ownsPpt) {
             try { $ppt.Quit() } catch {}
         }
     }
