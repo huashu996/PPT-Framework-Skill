@@ -1,288 +1,398 @@
 ---
 name: paper-fig-skill
-description: Create publication-ready academic framework, technical-route, chapter-overview, and research-content figures as editable PowerPoint, with optional PNG and Word outputs. Use when Codex must reproduce or optimize a reference figure, extract research content, preserve editable text and equations, prepare complex local visuals, and build accurate semantic connectors. Use a 5–8 minute adaptive fast path for ordinary single-page reference reconstruction and a 15-minute multi-agent path for more complex figures.
+description: 快速创建或忠实复刻可编辑的学术框图、技术路线图、研究框架图和章节概览图 PowerPoint。用户显式调用 $paper-fig-skill 时，必须把本 skill 的参数闸门、骨架审核、复刻硬规则、箭头几何、MathType 路线和最终检查置于其他演示文稿技能、生成工具及时间目标之上，禁止用通用工具默认行为覆盖。根据文字从零制作时，先快速生成一张只表达整体布局、模块区域、连接拓扑和区域分配的静态 SVG 骨架预览图供用户确认，再正式生成 PPT。需要公式时，使用桌面 PowerPoint 中可见的 MathType 插件直接写入真实 OLE，不经过网页、普通文本公式或中间 PPT。普通单页正式制作以约 10 分钟交付为目标；文字不得与框线、箭头、形状或其他元素碰撞，折线和折线箭头必须是单个 PowerPoint 原生可编辑对象，禁止用多段线拼接。参考图任务禁止近似重构或简化图形，必须保持结构、文字、形状、曲线和箭头一一对应，不用整页截图代替可编辑对象。用于“根据此图画 PPT 版”“根据论文内容先画框图骨架”“重绘技术路线图”“制作可编辑学术框图”等请求。
 ---
 
 # Paper-Fig-Skill
 
-Build the figure once, merge parallel work once, and validate once. Preserve semantic correctness, editability, text clearance, formula editability, and connector direction while avoiding repeated analysis, repeated PowerPoint startup, and open-ended visual iteration.
+## 目标
 
-## Use the 15-minute workflow by default
+以最快速度交付一个质量良好、可继续编辑的 PPTX。普通单页任务默认控制在约 10 分钟内。
 
-Target completion within 15 minutes after all source materials are locally available and the controlling contract is known. Treat this as the normal workflow, not a reduced-quality exception.
+最高优先级硬门槛：
 
-Preserve these non-negotiable requirements:
+1. 任何文字的实际可见字形不得与框线、箭头、连接线、形状、图标、图片、公式或其他文字发生碰撞；文字位于所属容器内部不算碰撞，但字形必须与容器边界保留安全内边距。该规则是所有规则中的最高原则，存在任意一处即不得交付。
+2. 每条折线或折线箭头必须是一个 PowerPoint 原生可编辑对象；禁止用多条直线、多个箭头或多个形状拼接后组合冒充一条折线。
+3. 除源图明确竖排、单字标签或逐字排列外，任何横排文本都不得出现单个汉字、单个英文 token、孤立标点或项目符号独占一行。
 
-- No missing, clipped, unreadable, or accidentally overlapping content.
-- Keep ordinary text and formulas clear of images, frames, modules, connectors, arrowheads, and unrelated text.
-- Keep a source-horizontal or source-vertical route exactly horizontal or vertical.
-- Attach connectors to the intended semantic object or explicit boundary anchor, never to a nearby label or decorative fragment.
-- Keep required formulas editable under one confirmed formula technology.
-- Keep logical structure, text, labels, frames, nodes, arrows, and connectors editable in PowerPoint.
-- Never flatten the complete figure into a screenshot.
+以上门槛高于局部尺寸复刻、同级等宽、对齐、留白、间距、装饰细节和 10 分钟时间目标。
 
-Use a high-assurance extended audit only when the user explicitly requests pixel-level reproduction, per-object equation reopening, or exhaustive verification. Do not let optional decorative differences trigger an extended audit.
+质量优先级：
 
-## Use the 5–8 minute single-page fast path
+1. 消除文字与任何框线、箭头、形状或其他元素的碰撞；
+2. 保证每条折线和折线箭头是单个 PowerPoint 原生对象，绝不拼接；
+3. 消除横排文本的单字行、孤立 token、孤立标点和项目符号行；
+4. 其他文字排版；
+5. 箭头类型、方向、目标和路线；
+6. 内容与结构完整；
+7. 留白、对齐和页面平衡；
+8. 次要装饰细节。
 
-Use this path when all of these are true:
+参考图复刻必须一一对应：不得删减、合并、改写或新增源图中的模块、文字、形状、曲线和箭头。禁止近似重构和简化图形；提速只能来自一次构建、组件复用和减少重复检查，不能来自降低复刻忠实度。
 
-- one reference image or one simple source slide;
-- one output slide;
-- no more than 60 visible text instances;
-- no more than 80 logical routes;
-- zero to three local raster crops;
-- no newly generated scientific illustration;
-- no more than four formulas, or no formulas;
-- the user requests reference reproduction rather than a new research narrative.
+普通任务由主智能体直接完成，不启动子智能体，不生成多个竞争版本。
 
-Classify the task in no more than 20 seconds. Do not run every specialist merely because the responsibility exists:
+## 显式调用时的强制优先级
 
-- Skip the formula agent when the formula target list is empty.
-- For one to four formulas, let the global agent insert them directly unless ribbon UI work would block layout.
-- Merge text and asset work into one specialist when all raster work is limited to three lossless source crops.
-- Start a dedicated complex-visual agent only for generated imagery, transparency work, segmentation, or more than three independent raster assets.
-- Always assign arrow semantics separately when the figure contains more than 12 routes; otherwise the global agent may record the route ledger while laying out.
+用户通过 `$paper-fig-skill`、skill 链接或明确名称调用本 skill 时，视为要求**逐条严格执行**，不是仅参考其风格或建议：
 
-Keep the five logical responsibilities, but use only the agents that have nonempty work. Never spawn an agent to return an empty ledger.
+1. 本 skill 的硬门槛、执行闸门和停止条件优先于通用 `Presentations`、模板技能、artifact-tool、PowerPoint 默认行为、自动连接器和其他辅助工具的默认流程。
+2. 其他技能和工具只能提供文件读写、对象创建、渲染和检查能力；不得覆盖或跳过参数确认、SVG 骨架审核、参考图一一对应、单对象折线、文字零碰撞、MathType 直写和最终状态检查。
+3. 工具默认结果与本 skill 冲突时，必须修改工具参数、改用另一种可编辑实现或停止并报告阻断；禁止接受“基本一致”“方向大致正确”“近似水平”“视觉上差不多”等结果。
+4. 开始执行前，将本次任务涉及的强制项作为当前工作检查表；完成每一阶段时逐项核销。不得用通用越界检测、对象数量或生成器成功信息代替 skill 专项检查。
+5. 参考图任务必须以源图可见几何为裁决依据。通用生成工具自动吸附、自动换行、自动路由、自动缩字或自动改锚点产生偏差时，以源图为准手动约束。
+6. 未完成全部适用检查项时，不得声称“严格按照 skill”“已审核”“阻断项为 0”或“可交付”。发现任何漏检后，撤销此前审核结论并按受影响范围重新检查。
 
-Use this fast-path budget:
+## 编码
 
-| Time | Work |
+- 默认以 UTF-8 读取和写入脚本、Markdown、JSON、CSV、配置、日志及其他文本文件，并在命令或 API 支持时显式指定 UTF-8。
+- 不得依赖 Windows 系统默认代码页读取包含中文内容或中文路径的文件；发现乱码时先按 UTF-8 重新读取，不得在乱码状态下编辑或覆盖原文件。
+
+## Windows 下的 PPT 运行时初始化
+
+正式生成 PPT 或调用 `@oai/artifact-tool` 前，必须先完成一次运行时预检：
+
+1. 先调用工作区依赖发现工具，使用其返回的 Node.js、Node.js packages 和捆绑运行时绝对路径；不得从当前目录、技能目录或历史版本号猜测运行时位置。
+2. 明确区分工作区根目录与捆绑运行时根目录。`C:\Users\<用户>\Documents\...` 可以是正确的工作区根目录，但捆绑运行时通常位于 `C:\Users\<用户>\.cache\codex-runtimes\codex-primary-runtime`；不得因为两者不同而声称工作区根目录错误。
+3. Windows 中若 `HOME` 为空，在执行 `setup_artifact_tool_workspace.mjs` 的同一进程内临时令 `HOME=USERPROFILE`；若 `USERPROFILE` 也不可用，则使用系统用户目录。不得让初始化器以 `process.cwd()` 代替用户目录。
+4. 若错误路径包含 `<工作区>\.cache\codex-runtimes\...`，立即判定为运行时根目录推导错误，不重复执行同一失败命令。先验证依赖发现工具返回路径下的 `node_modules\@oai\artifact-tool\package.json` 和构建入口确实存在，再继续。
+5. 官方初始化器仍失败但本地捆绑包已验证可用时，只允许一次回退：将临时制作目录的 `node_modules\@oai\artifact-tool` 链接到已验证的本地包。链接目标必须来自本次依赖发现结果，不得硬编码插件版本或把链接建到最终交付目录。
+6. 该异常属于 PPT 运行时初始化层，不属于本技能的内容分析、版式或用户工作区配置错误。对用户说明时应准确称为“Windows 下 `HOME` 缺失导致初始化器误从当前目录推导运行时路径”；恢复成功后继续主任务，不要求用户更换工作区。
+
+## 执行前确认全部参数
+
+开始任何实质性执行前，先判断任务类型，再一次性汇总并向用户确认全部适用参数。确认消息必须同时列出用户已经明确的要求、尚未明确项的推荐值、拟采用的默认值以及所有会改变结果的决定，不能只询问缺失项。不得把“参考图忠实复刻”和“根据文字从零制作”混用同一套默认值。
+
+将用户对整份参数清单的明确同意作为第一道强制执行闸门。只有收到“确认”“可以执行”“按此方案执行”或语义等同的明确回复后，才允许开始下一阶段。参考图忠实复刻任务通过第一道闸门后，可读取和分析参考图并正式制作；根据文字从零制作任务通过第一道闸门后，只允许读取内容、分析逻辑并创建一张静态骨架预览图，仍禁止打开或修改 PowerPoint、运行正式生成脚本、插入 MathType、绘制正式图标与细节、导出正式成品或把骨架宣称为最终成品。用户未回复、仅补充部分参数、表达含糊或沉默时，继续等待或重新汇总确认，不得开始执行。
+
+参数确认至少覆盖所有适用项目：任务类型、输入与参考来源、结构或模板、配色、内容范围与处理方式、页面尺寸与方向、是否保持原图比例、字体与字号、公式与 MathType、输出格式、文件名或保存位置，以及用户提出的其他约束。不适用的项目在清单中标明“不适用”，不得遗漏。
+
+### 参考图忠实复刻
+
+参考图本身就是结构模板、配色和内容依据，不得重复询问“使用什么模板”“使用什么配色”“根据什么内容”。只确认：
+
+1. 页面尺寸、方向、是否保持原图比例；
+2. 字体和字号范围；
+3. 图中存在公式时，是否使用 MathType。
+
+### 根据文字、提纲或结构说明从零制作
+
+生成任何内容或开始绘图前，必须一次性向用户确认：
+
+1. **模板或结构风格**：使用哪张参考图、PPT 模板或哪类结构，例如纵向技术路线、横向流程、分层框架、矩阵、环形机制或章节安排图；
+2. **配色**：沿用参考模板、使用单位/课题组配色，或由用户指定主色、强调色和背景色；
+3. **内容依据**：根据哪份文档、论文、提纲、表格或用户提供的文字制作；同时确认是忠实提取、压缩总结还是允许重组归纳，以及需要包含哪些板块；
+4. 页面尺寸和方向；
+5. 字体和字号范围；
+6. 图中存在公式时，是否使用 MathType。
+
+模板、配色或内容依据任意一项未明确时，不得直接套用上一张图、默认模板或上一任务配色。可以在同一条确认消息中给出一个推荐方案，但必须等待用户确认整份参数清单后再读取内容并开始逻辑分析。
+
+用户已经给出的要求直接复用到参数清单，但仍必须在执行前请用户确认整份清单。后续修改同一张图时，也要汇总本次修改范围、保持不变的参数、输出文件和其他适用参数，收到明确确认后再执行。
+
+用户明确表示“由你决定”“按推荐方案”或同等授权时，将已说明的推荐值写入整份参数清单；该授权不替代最终确认，仍须等待用户明确确认整份清单后再执行。
+
+#### 内容逻辑骨架审核闸门
+
+根据文字、提纲、论文、Word、表格或结构说明从零制作框图时，参数确认与正式绘图授权必须分成两道独立闸门：
+
+1. **参数确认**只授权读取内容、分析逻辑并创建一张静态骨架预览图；
+2. **骨架确认**才授权打开或修改 PowerPoint、运行正式生成脚本、正式绘制图标与细节、插入 MathType、完成最终渲染审核和交付。
+
+完成内容分析后，必须先创建一张清楚标注为“PPT 骨架预览（非最终 PPT）”的静态骨架预览图，并在对话中直接显示该图。优先生成 SVG，并可额外渲染 PNG 便于对话查看；预览图不要求可编辑。不得只用 Mermaid、等宽文本或纯文字说明替代骨架预览图。
+
+##### 快速 SVG 框图骨架流程
+
+骨架阶段的目标是让用户尽快审核**整体布局和模块区域**，不是提前制作正式框图。收到参数确认并完成内容逻辑分析后，按以下固定流程执行：
+
+1. 用一句话冻结中心叙事，再列出主区域、区域内一级模块、主连接、反馈连接、重复层和公式预留位；不展开正式图标、复杂装饰、精细曲线和逐字排版。
+2. 直接生成一个低保真 SVG 文件。使用简单矩形、圆角矩形、虚线容器、直线或折线路径和短标签，按参考图的大致比例表达区域位置、宽高占比、上下层级和连接方向。
+3. 参考图存在“一个详细主体 + 后方复制层 + 顶部初始化 + 右侧后端”等结构时，骨架必须先复现这些大区域关系，再填写模块名；不得把参考图改造成另一种布局。
+4. SVG 主体只画审核所需内容：页面/图幅边界、编号主区域、一级模块卡片、重复层轮廓、主流程、分支、反馈、跨区连接、公式占位和主要图标文字说明。图标只写语义名称，不生成正式图标。
+5. 在 SVG 底部加入紧凑的区域分配说明：主区域数量与名称、宽度比例、上下比例、公式数量与位置、最终输出尺寸。不要加入大段论文摘要。
+6. 保存一份当前 SVG；仅为对话显示需要时额外渲染一份 PNG。禁止打开 PowerPoint、创建可编辑骨架页、启动 MathType、制作中间 PPT 或把 SVG 嵌入最终 PPT。
+7. 在对话中直接显示骨架并停止，等待用户明确回复“确认骨架”或提出修改。收到修改后只更新同一份完整 SVG，再次提交审核。
+
+速度约束：普通单页骨架应在内容逻辑明确后约 1–3 分钟内生成。不要为骨架搜索网页素材、绘制正式图标、做像素级复刻或反复渲染；这些工作只在骨架确认后的正式阶段进行。
+
+骨架预览图采用类似 PPT 页面规划稿的纵向审核版式：
+
+1. 顶部显示“任务名称｜PPT 骨架预览（非最终 PPT）”和一句审核用途说明；
+2. 中部主体按照最终页面尺寸、方向和预计图幅比例，完整画出编号主分区、模块卡片、层级、区域占比、主流程、分支、反馈及跨模块连接；
+3. 底部单独设置“正式 PPT 的区域分布”说明框，至少列出主区域数量与名称、宽度分配、上下分配、MathType 公式计划及最终输出；
+4. 使用已确认的正式配色做低保真填充，使用户能够判断各区域视觉重量，但不提前制作正式图标、复杂装饰或细节元素；
+5. 公式只标明公式编号、变量关系或预留位置，不创建普通文本伪公式或 MathType 对象。
+
+骨架预览图只用于审核，不要求可编辑，也不得作为最终 PPT 的页面截图或背景。骨架确认后，以已确认预览图的模块边界和连接拓扑为依据创建唯一权威 PPTX，全部正式元素仍须是 PowerPoint 原生可编辑对象。
+
+骨架预览必须完整说明：
+
+- 全图要表达的中心结论、技术边界和主叙事；
+- 模块名称、层级、分组及建议顺序；
+- 主流程、分支、汇合、循环、反馈和跨模块连接的拓扑；
+- 拟采用的分区或子图安排，如 `(a)`、`(b)`、`(c)`；
+- 每个模块的主要图标元素、视觉隐喻及其与内容的对应关系；
+- 计划出现的公式、变量关系及拟放置区域；用户要求 MathType 时只说明公式计划，不提前创建普通文本公式或 MathType 对象；
+- 对原文所做的保留、压缩、合并、删减或重组决定。
+
+骨架必须让用户能直接指出“增加、删除、合并、拆分、改名、换序、改连接、改图标”中的任意修改。提交后停止正式制作，等待用户明确回复“确认骨架”“按此正式绘制”或语义等同的完整确认。用户仅提出局部修改、补充内容或表达保留意见时，先更新并重新提交**完整骨架**，再次等待确认；不得把局部意见视为正式绘图授权。
+
+正式制作必须忠实实现最后一次确认的完整骨架。若制作中发现需要新增、删除、合并、拆分、重排模块，或改变主流程、分支、反馈、公式关系和主要图标隐喻，立即停止正式制作，更新完整骨架并重新请求确认。只调整尺寸、间距、对齐、字形换行或其他不改变语义拓扑的视觉细节时，无需重新确认骨架。
+
+参考图忠实复刻任务不增加骨架审核闸门，因为参考图本身就是已给定骨架；但用户要求在参考图基础上重组内容、改变模块或重新设计逻辑时，按“根据文字从零制作”执行两道闸门。
+
+## 10 分钟流程
+
+对于根据文字从零制作的任务，约 10 分钟的正式制作计时从用户确认完整骨架后开始；等待用户审核和修改骨架的时间不计入正式制作时间。
+
+| 骨架阶段 | 工作 |
 |---|---|
-| 0:00–0:20 | Classify complexity, reuse the contract, and decide which roles are nonempty. |
-| 0:20–2:00 | Run text/assets and arrow semantics in parallel while the global agent establishes the numeric skeleton. |
-| 2:00–5:00 | Build the complete non-connector PPT once; do not export an intermediate preview. |
-| 5:00–6:30 | In one PowerPoint session, apply native crops, mixed-script fonts, exact routes, arrowheads, z-order, and final text-box buffers. |
-| 6:30–8:00 | Save once, render once, run `fast-ppt-audit.ps1` once, repair only blocking failures in the same session, and deliver. |
+| 参数确认后 | 读取内容，提炼中心结论、模块层级、连接拓扑、图标语义和公式计划 |
+| 创建骨架 | 生成一张静态审核图：上部为完整区域骨架，下部为区域分配、公式计划和最终输出说明 |
+| 提交审核 | 在对话中直接显示骨架预览图，并提供文件链接和必要的模块逻辑说明 |
+| 等待用户 | 不打开或修改 PPT，不进入正式绘图或 MathType；收到修改时更新骨架预览图并再次确认 |
 
-Use one PowerPoint process for the entire finalization pass. Do not open separate sessions to inspect pictures, apply crops, add routes, fix text, export the preview, and save. Collect picture indices, text metrics, route counts, and file validation before closing that one process.
+骨架确认后的正式制作：
 
-For the base construction:
-
-- Export the editable PPTX only. Do not render the artifact-tool first draft.
-- Reserve 5% extra width for single-line labels and titles before construction.
-- Create raster placeholders at their final rectangles, then apply native PowerPoint `PictureFormat.Crop` in the finalization session.
-- Add all route records in one batch from explicit waypoints after geometry freezes.
-- Apply fonts, crops, routes, and z-order in the same batch.
-
-Render only the finalized slide. If that render exposes a blocking failure, modify the existing objects before closing PowerPoint and overwrite the same preview. Do not generate a new structural draft.
-
-Run `scripts/fast-ppt-audit.ps1` as the default final check. Run `slides_test.py` or another full secondary audit only when the fast audit fails, cannot inspect the deck, or the user explicitly requests high assurance. Never run both by default.
-
-On Windows, resolve the current user home once from the environment and keep `HOME`/`USERPROFILE` consistent before presentation-workspace setup. This prevents the artifact runtime from being rediscovered under the current drive. Never hard-code the resolved home in the skill or generated scripts.
-
-## Run one compact intake and portable preflight
-
-Reuse values already stated in the current request or conversation. Ask at most one compact confirmation only for missing, contradictory, or result-changing choices:
-
-- master/canvas and orientation;
-- Chinese and Latin fonts plus size tokens;
-- formula technology and whether fallback is allowed;
-- wording-preservation boundary and reference-fidelity level;
-- requested outputs.
-
-Do not ask the user to reconfirm an explicit value. Content extraction and visual classification may start while a nonblocking choice is unresolved; only geometry that depends on that choice must wait.
-
-Resolve this skill from the directory containing `SKILL.md`. Never hard-code a username, drive letter, Codex home, repository path, MathType executable, or installation path. Treat `references/`, `scripts/`, and `agents/` as optional helpers.
-
-Run capability detection once per task:
-
-1. Record the available PowerPoint-writing surface.
-2. Run `scripts/portable-preflight.py` when present; otherwise perform the equivalent minimal check.
-3. When MathType is requested, confirm the visible PowerPoint MathType/WIRIS/Design Science ribbon add-in once and record whether `Equation.DSMT4` is registered.
-4. Do not repeat capability, registry, add-in, or path discovery for each formula or each render.
-5. Do not stop because an optional helper is absent. Use the self-contained workflow below.
-
-## Coordinate five roles with one authoritative PPT
-
-Use multi-agent work when at least two responsibilities are nonempty and can proceed independently. The main agent is the **global layout agent** and the only writer of the authoritative PPT. Other agents must not edit that PPT.
-
-Treat these as responsibilities:
-
-1. **Global layout agent:** own the canvas, coordinate system, panel/module geometry, object names, z-order, merge, final render, and acceptance decision.
-2. **Text agent:** extract visible wording once and return final text records, typography tokens, wrapping rules, and measured occupied rectangles.
-3. **Formula agent:** create the formula ledger and, when appropriate, a separate editable MathType formula-bank PPT.
-4. **Complex-visual agent:** classify and prepare all crops, generated icons, transparent assets, and local raster exceptions in one batch.
-5. **Arrow-logic agent:** map semantic routes in parallel, then resolve exact anchors and orthogonal waypoints after the non-connector layout freezes.
-
-For a complex task with four concurrency slots, run the global layout agent plus the three largest nonempty specialist roles first. As soon as one specialist finishes, reuse that slot for the remaining nonempty role. Start arrow semantic planning early; delay physical connector creation until layout freeze. For a fast-path task, prefer two productive specialists over four low-work agents.
-
-Use one-writer ownership:
-
-- Specialists may read sources and create manifests, assets, or a test/formula-bank PPT.
-- Specialists must not open or mutate the authoritative PPT.
-- The global layout agent imports each specialist result once.
-- Do not create several competing full-slide drafts.
-
-Maintain one compact `figure-manifest.json` instead of three continuously updated prose ledgers. It must contain:
-
-- canvas, margins, fonts, size tokens, gap token, and output contract;
-- semantic object IDs, peer groups, rectangles, and z-layers;
-- text records and formula targets;
-- asset paths, crop rules, and target rectangles;
-- route records, anchors, waypoints, and arrowhead ends.
-
-Specialists may use separate JSON/TSV files during parallel work, but the global agent merges them once. Do not rewrite the manifests after harmless visual nudges; update only changed coordinates or content.
-
-## Follow the fixed time budget
-
-| Time | Work |
+| 时间 | 工作 |
 |---|---|
-| 0:00–1:00 | Reuse/confirm the contract, run one capability preflight, establish canvas and stable object IDs. |
-| 1:00–2:00 | Launch text, formula, and complex-visual work; global agent builds the panel/module skeleton; prepare arrow semantics. |
-| 2:00–6:00 | Specialists produce text records, formula bank, assets, and logical route ledger while the global agent completes the non-connector layout. |
-| 6:00–8:00 | Freeze occupied rectangles and anchors; resolve final formula boxes and route waypoints. |
-| 8:00–11:00 | Merge text/assets/formulas once; add all connectors in one batch; apply z-order once. |
-| 11:00–12:30 | Run one automated object audit and export one whole-slide preview. |
-| 12:30–14:00 | Fix only reported blocking failures in the same PPT. Do not rebuild the structure. |
-| 14:00–15:00 | Re-run failed checks, save/reopen once, and produce only requested deliverables. |
+| 0–1 分钟 | 冻结已确认骨架，建立对象清单和数值化布局 |
+| 1–7.5 分钟 | 一次生成完整可编辑 PPTX |
+| 7.5–9 分钟 | 渲染最终页一次并检查核心问题 |
+| 9–10 分钟 | 最多一次局部修复；基于修复后的最终保存状态重新渲染受影响区域，确认零阻断项后交付 |
 
-If one asset or formula is still unresolved at minute 6, continue the rest of the figure and repair only that item at merge time. Never restart completed parallel work because one item failed.
+默认只保留：
 
-## Build the non-connector layout once
+- 一份紧凑对象清单；
+- 一个参数化生成脚本；
+- 一个最终 PPTX；
+- 一次最终渲染；
+- 最多一次局部修复。
 
-Inventory only the visible and logically necessary content. Avoid deep-reading unrelated files. Create stable IDs before construction and use numeric guides for margins, panels, rows, columns, symmetry axes, and peer gaps.
+不要生成中间 PPT、竞争草稿或对比材料。骨架阶段只保留一张当前骨架源图和必要的查看用渲染图；骨架确认后只创建一个权威 PPTX。不要重复重开、渲染或重建整页。
 
-Place all panels, modules, text placeholders, formula placeholders, images, icons, labels, legends, and reserved connector corridors before drawing logical connectors. Normalize peer sizes and align the semantic whole object, not a visible fragment.
+骨架预览图是正式制作前的审核状态，不是最终成品。必须在图内标注“PPT 骨架预览（非最终 PPT）”，正式 PPT 不得嵌入该预览图充当整图。
 
-Use native PowerPoint shapes for logical nodes, frames, legends, ordinary symbols, labels, and editable text. Keep backgrounds at the back, route shafts above backgrounds, modules and nodes above routes, and labels/formulas at the top.
+### 避免返工的首次构建规则
 
-Use one default external `gap_token = 5 pt` unless the confirmed reference requires another value. Inflate each ordinary text/formula rectangle by that token for composition-level collision testing. Do not solve crowding by shrinking below the confirmed font size when usable space exists elsewhere.
+- 首次生成即固定图层顺序：区块背景 < 连接线和箭头 < 节点形状 < 节点文字、独立文本框和公式；不得等渲染后再逐条调整被遮挡的连接线。
+- 用户要求 MathType 时，首次构建只为公式保留无可见文本的唯一命名区域；禁止先显示普通文本伪公式。插入真实 MathType 对象前删除对应占位对象，完成后检查同名目标只剩一个对象。
+- MathType 必须使用固定的 PowerPoint 桌面端直写路线：直接打开唯一权威 PPTX，在可见的 `MathType` 选项卡中调用“插入公式”组内的新公式按钮，在 MathType 编辑器中直接输入，`Ctrl+S` 更新当前 OLE，关闭并返回 PowerPoint，再按预留矩形命名和定位。不得启动浏览器，不得先创建普通文本公式，不得建立无必要的中间 PPT。
+- 可见的 PowerPoint MathType 选项卡和“插入公式”按钮是首选且权威的入口。检测脚本没有识别到加载项，但 PowerPoint 中该入口可见可用时，仍使用可见入口；不得因此切换到网页、帮助控件或兼容插入分支。
+- `scripts/mathtype-ppt.ps1` 默认只允许执行一次 `detect` 和最终的 `inspect/validate`；不得使用其 `insert/edit` 动作生产公式。若脚本出现 `null-valued expression`、活动演示文稿冲突或空 OLE，立即停止该分支，不得反复重试；改用已经确认的可见功能区路线。COM 只用于最终对象枚举、重命名、等比例定位和保存，不得假装普通文本可以写入公式内容。
+- MathType 输入前必须把输入法冻结为英文状态。在空公式中用一个拉丁字符做一次输入状态测试；若出现中文候选或中文字符，只允许清空一次、切换英文状态并重测一次。测试成功后冻结输入法和逐键输入方式，不得在同一批公式中来回切换中文输入法、剪贴板粘贴、TeX 粘贴和不同键盘路线。
+- MathType 输入必须通过一次冒烟测试冻结完整路线：插入入口、英文输入状态、逐键输入方式、更新/保存方式和返回 PowerPoint 的方式均不得在同一批公式中切换。只允许选择位于“插入公式”组内、可访问名称精确匹配的 MathType 新公式按钮；禁止使用旧坐标、旧索引或任何“帮助”“网络上的 MathType”控件。
+- 每个 MathType 公式输入完成后先执行更新/保存当前 OLE（经典 MathType 使用 `Ctrl+S`），再执行“关闭并返回 PowerPoint”。不得只凭关闭对话框、对象数量或 `ProgID` 判断内容已保存。
+- 新公式返回 PowerPoint 后，只做一次对象归位：识别最新的 `Equation.DSMT4`，删除对应的无可见文本占位对象，将公式重命名为目标 ID，并按预留矩形等比例缩放、水平和垂直居中。不得为调整位置重复打开 MathType；不得强制独立拉伸宽度和高度。
+- 公式插入后必须从最终 PPT 重开并核对实际内容：1–4 个公式全部重开；5 个及以上至少重开第一、中间和最后一个。最终渲染中每个公式必须显示非空内容，且仍为 `Equation.DSMT4`；对象存在但预览为空同样属于交付阻断项。
+- 除一次输入状态纠正和一次已定义的稳定回退外，任何同一 MathType 步骤失败后都不得继续试探其他入口。一个可见入口成功后冻结该路线；若后续功能区失效，复制一个已验证且非空的 `Equation.DSMT4`，通过 OLE 编辑动作替换内容，并对本批剩余公式始终使用该路线。
+- 默认执行“一次完整生成 → 一次局部修复 → 一次最终检查”。局部修复只改受影响对象，不重新构建整页；最终检查前不重复导出整页 PNG。
+- 公式插入、图层顺序和占位符清理属于首次构建步骤，不得延后到审查阶段处理。
+- 任何公式插入、文本修改、对象移动、缩放、删除或图层调整都会使此前的视觉审核失效；只能以最后一次修改并保存后的权威 PPTX 作为审核对象。
 
-Freeze the first complete non-connector layout. Ordinary spacing, z-order, crop, caption, or route corrections must edit the same PPT. Regenerate only when the user changes the canvas, hierarchy, semantic logic, or content inventory.
+## 快速构建顺序
 
-## Use the one-pass parallel text protocol
+### 0. 冻结已确认骨架
 
-The text agent reads each source once and returns one record per visible text instance. Use this minimal schema:
+根据文字从零制作时，只能以用户最后一次明确确认的完整骨架作为正式构建输入。先把模块、层级、连接拓扑、分区、主要图标隐喻和公式计划冻结到对象清单，再开始任何 PowerPoint 操作。参考图忠实复刻时，以已确认参数和参考图作为构建输入。
 
-```json
-{
-  "id": "TXT_MODULE_TITLE",
-  "source_text": "Original wording",
-  "display_text": "Original wording",
-  "change_reason": null,
-  "role": "module_title",
-  "peer_group": "module_titles",
-  "language": "en",
-  "size_token": "title",
-  "alignment": "center",
-  "wrap_policy": "single_line",
-  "allocated_width_pt": 110,
-  "occupied_rect": [100, 40, 126, 30],
-  "qa_flags": []
-}
-```
+### 1. 紧凑对象清单
 
-Preserve `source_text` and `display_text`; never silently shorten or paraphrase. Record an authorized change reason. Treat formula content as a formula placeholder and do not measure it as ordinary text.
+快速记录：
 
-Measure ordinary text once in one batch using final fonts, final sizes, the target PowerPoint renderer, and allocated widths. Disable unexpected AutoSize. Record rendered bounds, reject font substitution and overflow, and derive the text box with one consistent internal padding token. Permit a second measurement only if wording, font, size, renderer, or allocated width changes.
+- 页面与主分区；
+- 全部文本框及其角色；
+- 每个独立形状、图片和图标的真实几何、位置、旋转和层级；
+- 每条箭头的源、目标、头部数量及所在端、类型、方向、虚实、弧度或拐点；
+- 同级重复组件及数量；
+- 源图明确存在的包含、覆盖和遮罩关系。
 
-Use semantic manual breaks only for deliberately two-line titles or labels. Let body text wrap naturally. Flag orphan Chinese characters, isolated variables/operators, and punctuation. The global agent, not the text agent, runs the final inflated-rectangle collision test after all content is merged.
+使用稳定 ID 防止漏项即可，不建立额外审查文件。
 
-## Use the fast parallel MathType formula bank
+### 2. 忠实复刻硬规则
 
-When fewer than five formulas are required, insert them directly through the confirmed PowerPoint MathType ribbon workflow. When five or more are required, use a dedicated formula agent and a separate `mathtype_formula_bank_test.pptx`.
+- 禁止用“语义相近”或“视觉大致相似”的结构代替源图对象。
+- 直线、折线、曲线和块状箭头必须按源图类型复刻，禁止相互降级或替换。
+- 椭圆、圆弧、曲线连接器、自由曲线和虚线环必须分别识别；禁止用若干椭圆近似独立曲线箭头。
+- 形状轮廓、数量、尺寸关系、旋转、虚实、颜色和层级尽可能按源图还原，不得为了快速绘制擅自改成通用矩形、圆形或直线。
+- 原图有箭头头部的连接必须保持为箭头；只有源图明确没有箭头头部时，才允许使用普通线段。
+- 箭头头部数量必须按可见形状识别，不得根据“数据下行”“指令上行”“输入”“输出”等语义推断。原图为双头箭头时必须使用双头箭头，不得替换为单头箭头，也不得拆成方向相反的两支单头箭头。
+- 禁止根据“层级线”“辅助线”“结构线”等语义判断自行设置 `arrow: false`。
+- 图像低清或复杂区域难以辨认时，先局部裁剪放大确认形状和箭头，再绘制；不得直接猜测。
+- 单个原生对象无法表达非连接类复杂轮廓时，可使用多个可编辑对象组合还原，但不得改变可见外形和连接语义。此规则不适用于折线和折线箭头；折线类连接必须始终保持为单个 PowerPoint 原生对象。
 
-Create `formula-targets.json` once with ordered target names, TeX/content, slide numbers, reserved rectangles, and intended apparent size. The main agent places named placeholders and continues building without waiting.
+### 3. 数值化布局
 
-Give the formula agent exclusive ownership of desktop PowerPoint UI during the batch. In one PowerPoint session:
+先确定页面外边距、主分区、行列基线、卡片尺寸和箭头通道。重复组件必须使用共享参数或组件函数批量生成。
 
-1. Confirm the MathType ribbon once and insert one smoke-test formula.
-2. Verify that the result is editable; when exposed, require `OLEFormat.ProgID = Equation.DSMT4`.
-3. Insert all formulas into one labeled grid bank in ledger order.
-4. Rename every equation to its exact target name.
-5. Save at controlled checkpoints, not after every formula.
-6. Mark an individual failed formula and continue; repair failures at the end.
+先放文本并确定所需空间，再冻结卡片和容器尺寸；不要先画过小的框，再靠缩小字号塞入内容。
 
-After the bank and main layout are complete, open both in the same PowerPoint process and copy all formulas by name in one merge pass. Scale each equation proportionally into its reserved rectangle, center it, preserve its name, then remove the placeholder.
+### 4. 文字排版
 
-Run the default fast validation once: expected count, unique names, positive dimensions, slide bounds, editable OLE type/ProgID when exposed, and successful reopen of the bank and merged PPT. Reopen the first, middle, and last formulas through the MathType ribbon. Reopen every equation only when the user explicitly requests high assurance or a sample fails.
+文本角色：
 
-If the ribbon cannot be operated, use direct OLE only as a compatibility route when `Equation.DSMT4` is registered. Use Office-native equations or grouped editable math text only when the user authorizes fallback. Never use a formula screenshot without explicit permission.
+- `TITLE`：页标题、章节标题；
+- `SHORT_LABEL`：节点名、栏目名、短标签；
+- `BODY_PARAGRAPH`：连续语义正文；
+- `BULLET_BODY`：项目符号或编号正文；
+- `VERTICAL_LABEL`：源图明确竖排的侧边文字；
+- `FORMULA`：公式或变量表达。
 
-Read `references/mathtype-tool.md` only when MathType is selected. Use `scripts/mathtype-ppt.ps1` when present for detection and saved-object validation.
+硬规则：
 
-## Prepare complex visuals in one batch
+- 连续正文必须保持为一个段落，使用文本框自动换行。
+- 不得为了平衡行长随意插入硬回车。
+- `BODY_PARAGRAPH` 不得居中。
+- 中文正文达到三行及以上时默认两端对齐；源图明确左对齐时除外。
+- 标题、栏目名、节点名和一至两行短标签可以居中。
+- 只有源图明确分行、内容本身是并列短语或不同语义段落时，才保留硬换行。
+- 项目符号正文左对齐或两端对齐，并统一悬挂缩进。
+- 横排标题、短标签、正文和项目符号文本的任意一行都不得只剩一个汉字、一个英文 token、孤立标点或项目符号；该规则不限于末行。
+- 原图允许语义分行时，先验证每个硬换行片段在目标字体、字号、文本框有效宽度和内边距下能完整容纳；不能容纳时不得保留该硬换行方案。
+- 文本框有效宽度必须按目标字体在 PowerPoint 中的实际字宽计算，并扣除左右内边距；不能仅依据字符数、生成后端预览或未缩放框宽估算。
+- `SHORT_LABEL` 优先保证完整词组同行，例如“评价方法选择”“诊断模式”不能拆成“评价方法选 / 择”或“诊断模 / 式”。
+- 同级文本统一字体、字号、字重、行距、内边距、方向和对齐。
 
-Classify each non-text visual in no more than 20 seconds:
+文字修复顺序：
 
-- **Native:** use native PowerPoint when the object needs logical editing or can be expressed with at most three standard primitives.
-- **Crop:** use one tight source crop for an inseparable subordinate photo, plot, scene, hardware view, or complex panel.
-- **Generate:** generate only when no usable source exists, the asset carries necessary meaning, and native reconstruction would exceed 60 seconds.
+1. 删除造成孤字或孤立 token 的非必要硬回车；
+2. 扩大文本框有效宽度或减小左右内边距；
+3. 同步扩大卡片并调整相邻模块、箭头通道和间距；
+4. 在用户允许范围内统一调整同级字号，但不得低于用户下限；
+5. 必要时扩大所属区域或调整整体布局；
+6. 完成后在最终 PowerPoint 渲染中重新确认实际换行。
 
-Prepare all crops, resizes, background removals, and generated assets together while the main layout is built. Reuse an accepted asset; do not regenerate it for positioning changes. Cache derived assets in the build directory with stable names.
+不得只缩小一个同级卡片的字号，也不得用自动缩字、继续添加硬回车或拆散词组来掩盖错误断行。若消除单字行与同级等宽、原框宽或局部对齐冲突，优先消除单字行。
 
-Require transparency only when the silhouette must overlap another object. Attempt background removal once. If cleanup would exceed 45 seconds or leaves a visible halo, use a clean rectangular crop inside a native frame.
+### 5. 形状与留白
 
-A local raster is acceptable only when it is independently selectable and replaceable and contains no editable prose, formula, axis/tick label, logical connector, major module frame, or route label. Never rasterize the complete figure. Keep captions, labels, frames, and logical connections native.
+- 页面外边距通常为短边的 4%–6%，参考图更紧时按原图。
+- 普通模块间距约 4–8 pt；高密度区域不低于约 3 pt。
+- 正文内边距通常为 4–8 pt；高密度卡片可用 3–5 pt。
+- 同级卡片优先保持等宽、等高、等间距；若与消除单字行冲突，先扩大整组卡片或重分配列宽，不得保留单字行。
+- 为标题、正文、箭头通道和底部输出区分别预留空间。
+- 页面不得一侧拥挤、一侧空洞。
+- 源图中的正常包含、标题条嵌合、图标覆盖和遮罩不是碰撞。
 
-If an asset is unusable by minute 6, replace it with a source crop in a native frame, a cached asset, or a neutral native symbol. Do not let one decorative asset block delivery.
+### 6. 箭头
 
-## Plan arrow logic in parallel and draw once
+模块位置冻结后再生成箭头。每条箭头只选一种实现：
 
-The arrow-logic agent may analyze semantics while layout proceeds, but it must not draw provisional connectors. Return one route record per independently directed arrow:
+| 类型 | 实现 |
+|---|---|
+| `LINE_ARROW` | 原生直线连接器或线条箭头 |
+| `ELBOW_CONNECTOR` | 原生肘形连接器 |
+| `CURVED_CONNECTOR` | 原生曲线连接器 |
+| `BLOCK_ARROW` | 原生块状箭头形状 |
 
-```json
-{
-  "id": "R01",
-  "source": "INPUT",
-  "target": "MODULE_A",
-  "source_anchor": "right",
-  "target_anchor": "left",
-  "arrow_end": "target",
-  "kind": "straight",
-  "waypoints": [[120, 80], [180, 80]],
-  "segment_axes": ["H"],
-  "line_pt": 1.1,
-  "dash": "solid",
-  "z_layer": "route",
-  "min_span_pt": 12
-}
-```
+规则：
 
-Split every directed chain into separate routes when multiple arrowheads exist. Keep independent buses separate unless the source contains a true merge node. Record curves as curves and folded routes as one native elbow/polyline.
+- 每条折线和折线箭头只能使用一个 PowerPoint 原生可编辑对象：优先使用原生肘形连接器；需要锁定多个拐点时，使用一个原生自由曲线/自由多段线形状并在同一对象的线条属性中设置箭头端点。禁止拆成多条直线或多支箭头，禁止以组合、成组或视觉对齐掩盖拼接。
+- 折线对象完成后必须在 PowerPoint 对象层级中核对：一条逻辑路径对应且只对应一个对象；不得存在同一路径的 `_SEG_`、分段线或首尾相接的多个线条对象。
+- 保持源图的箭头数量、类型、方向、虚实、颜色、头部位置和实际路径。
+- 将箭头头部数量作为几何属性逐条记录：`0`、`1` 或 `2`。双头块状箭头优先使用对应原生双头形状，例如垂直双头箭头使用 `upDownArrow`；不得用 `upArrow`、`downArrow` 或语义方向替代。
+- 箭头的连接拓扑属于源图内容，不得改变。逐条记录并保持 `源对象 → 中间节点/分支 → 目标对象`；不得跳过节点、交换源与目标、改接邻近对象、合并分支或凭语义重新连接。
+- 每条箭头必须记录 `sourceId`、源端锚点所在边及相对位置、全部拐点或曲线控制点、`targetId`、目标端锚点所在边及相对位置、箭头头部所在端。生成时按该记录逐项复刻，不得仅记录“两个对象相连”。
+- 连接锚点必须与源图一致：上边、下边、左边、右边、角部或边上的偏移位置均不得擅自改变。禁止使用自动就近锚点、默认中心点或中心到中心连线代替源图锚点。
+- 原图为水平段时，端点和该段全部拐点必须保持同一 y；原图为垂直段时必须保持同一 x。原图为水平/垂直直角折线时，只能使用水平段和垂直段，禁止因对象错位改成斜线。
+- 对参考图中的水平直箭头和水平线段，最终 PPT 对象检查必须满足起点与终点纵坐标差 `|y1-y2| ≤ 0.1 pt`；垂直直箭头和垂直线段必须满足 `|x1-x2| ≤ 0.1 pt`。超过阈值即为斜线和交付阻断项，不得凭肉眼认定“基本水平/垂直”。
+- 若对象位置导致原路径无法保持水平或垂直，先修正对象位置、尺寸或锚点；不得让箭头路径迁就错误布局。
+- 若原生肘形连接器会自动改锚点或改道，先使用随目标同步移动的不可见代理锚点；仍无法锁定原图路线时，改用一个 PowerPoint 原生自由曲线/自由多段线对象承载全部拐点，并在该单一对象上设置箭头头部。不得使用分段原生线条。
+- 曲线箭头必须使用可编辑曲线连接器或可编辑组合曲线路径，保持弧向、弯曲程度和连接边界；不得改成直线、折线或椭圆。
+- 原图每个箭头头部都必须显式记录并生成。不得因为连接位于第二层、容器内部或重复组件中而关闭箭头。
+- 批量组件只能复用已核对的箭头配置；不得让通用组件凭层级自动决定 `arrow: false`。
+- 箭头必须指向语义目标，不得落在文字、装饰或邻近对象上。
+- 水平路线保持同一 y，垂直路线保持同一 x。
+- 折线路线使用水平/垂直段；反馈箭头优先走模块外侧。
+- 箭身必须可见并明显长于箭头头部。
+- 固定逻辑连接区域的图层顺序：容器背景 < 连接线和箭头路径 < 节点/模块形状 < 节点文字与独立文本框。优先先生成连接线，再生成节点和文字；若生成顺序相反，必须显式将路径置底并将节点文字置顶。
+- 箭头穿过节点框仅在源图确实如此时保留，但路径仍不得覆盖节点文字。不能依赖连接器“默认置底”；普通线段、组合箭头和后生成路径必须显式核对层级。
+- 只有源图明确要求路径显示在模块内部或文字之上时，才提高对应路径层级，并只提高该条路径。
+- 使用当前后端已经确认的端点语义。若 `head` 位于源端、`tail` 位于目标端，目标箭头直接使用 `tail`，不要反向绘制后旋转。
+- 必要时可使用位于目标可见边界上的不可见代理锚点，但必须随目标同步移动。
 
-After the global agent freezes the non-connector layout, resolve named semantic anchors and exact waypoints once. Do not use a generic shape-center connector when the source specifies a boundary port or axis.
+## 碰撞原则
 
-Before PowerPoint insertion, require:
+文字碰撞是最高优先级交付阻断项。所有文本必须按 PowerPoint 最终渲染后的实际可见字形边界判断，而不是只看文本框外接矩形、后端估算或对象层级。文字与所属容器是正常包含关系，但字形不得接触或穿越容器边框。
 
-- horizontal segment: `y1 == y2`;
-- vertical segment: `x1 == x2`;
-- orthogonal route: every segment is horizontal or vertical;
-- endpoint lies on the declared semantic boundary anchor;
-- arrowhead is on the ledger-declared destination end;
-- shaft and arrowhead envelopes avoid inflated text/formula/image rectangles and unrelated modules;
-- ordinary routed span is at least 12 pt;
-- route IDs, source/target pairs, and visible arrow count are complete and nonduplicated.
+必须消除：
 
-Correct invalid JSON or frozen geometry before opening PowerPoint; never render a known diagonal or semantically misattached route for diagnosis. Add all route shafts and arrowheads in one batch and apply z-order once.
+- 任何标题、标签、正文、项目符号、公式说明与框线、箭身、箭头头部、形状、图标、图片、公式或其他文字相交；
+- 箭头穿过文字或无关模块；
+- 两个独立卡片、图标、公式、块状箭头或图片互相侵入；
+- 内容越出页面或所属区域；
+- 同级对象间距明显不一致。
 
-## Validate once and stop
+判断时将文字和箭头的可见边界向外扩展约 3–4 pt，保留视觉安全距离。文字不得通过置顶、遮罩、白底覆盖或把路径置底来“视觉隐藏”碰撞；如果几何上仍相交，就必须调整文本框、容器尺寸、对象位置或单条原生折线路径。
 
-Read `references/quality-check.md` before final validation when it exists. Use its fast gate, not an open-ended inspection loop.
+旋转块状箭头、曲线箭头和组合路径必须按旋转后的实际可见轮廓判断碰撞，不得只使用未旋转外接框或对象中心距离。
 
-When `scripts/fast-ppt-audit.ps1` exists, run it once against the authoritative PPT for slide bounds, text overflow, MathType count, and named `ROUTE_*` axis compliance. Treat its JSON as the initial failure list; do not repeat the same checks manually.
+忽略正常容器包含、源图明确存在的标题条叠放、嵌入、遮罩和有意覆盖。碰撞豁免必须对应到源图中的具体对象对和具体交叠范围；源图某处存在交叉，不代表该区域内的所有重叠都可以忽略。不要为消除工具误报而移动已经正确的对象。
 
-Run one automated object audit for:
+发现碰撞时优先扩大文本框或容器、增加内边距、移动独立对象或扩大箭头通道；不得通过删除箭头、改写文字、乱断行、单独缩小字号、改变层级或拼接折线解决。
 
-- content and route count;
-- slide bounds and nonempty objects;
-- text overflow and font substitution;
-- inflated text/formula clearance;
-- route axis compliance, endpoint semantics, arrowhead end, and minimum shaft span;
-- formula count, names, technology, dimensions, and bounds;
-- raster aspect ratio and usable resolution;
-- file save/reopen integrity.
+## 可编辑性
 
-Export one whole-slide preview. Inspect the whole composition and only connector-dense or audit-flagged regions at approximately 150%. Do not inspect every object repeatedly at 200–400%.
+- 文本、形状和逻辑箭头必须是独立可编辑对象。
+- 不得把整张参考图作为背景或整页截图交付。
+- 实验图、显微图和照片可作为独立裁剪图片嵌入。
+- 只保留一个权威 PPTX。
 
-Fix blocking failures only: missing/clipped content, unreadable text, wrong flow direction, avoidable diagonal routes, text/object overlap, broken formulas, out-of-bounds objects, or unusable files. Apply one targeted same-PPT repair pass and rerun only failed checks plus one final render.
+## PowerPoint 与 MathType 窗口控制
 
-Stop when the automated gate has no blocking failures and the final render has no obvious collision or semantic error. Minor decorative, crop, icon-style, and pixel-level spacing differences do not trigger another iteration unless the user requested exact high assurance.
+MathType 采用以下逐公式固定 SOP，不得自行增减步骤：
 
-## Produce only requested deliverables
+1. 在进入界面操作前准备好公式清单、目标名称和预留矩形；PPT 中不得出现普通文本伪公式。
+2. 重新锁定唯一权威 PPTX，激活并最大化 PowerPoint，确认标题栏与目标文件一致。窗口最小化、标题不匹配或焦点在其他应用时，先恢复窗口，不做任何试探性点击。
+3. 从当前 PowerPoint 中可见且启用的 `MathType` 插件进入。优先按可访问名称精确调用“插入公式”组内的新公式按钮；禁止复用旧坐标、旧索引，禁止点击 `MathType 帮助`、`网络上的 MathType`、浏览器或网页。
+4. 每创建一条新公式，都先在空白 MathType 中逐键输入拉丁字母 `x`。只有画面显示单独英文 `x`、没有中文字符和候选栏时，才清空 `x` 并开始正式输入。
+5. 若 `x` 触发中文候选，只执行一次：取消候选、清空、切换英文、重新输入 `x`。复测仍失败时立即停止该公式并报告输入法阻断，不得继续盲输。
+6. 通过测试后使用已冻结的逐键路线和 MathType 原生快捷键直接写公式；不得使用 PowerPoint 普通文本预写，不得在粘贴、TeX、Unicode、网页和不同键盘路线之间切换。
+7. 公式完成后立即目视确认内容，再按 `Ctrl+S` 更新当前 OLE，关闭并返回 PowerPoint；不要在 MathType 内反复调整大小或位置。
+8. 返回 PowerPoint 后识别最新非空 `Equation.DSMT4`，删除对应无可见文本占位对象，重命名并按预留矩形等比例居中；保存权威 PPTX。
+9. 下一条公式从步骤 2 重新开始，包括最大化确认和 `x` 输入法测试。不得因为上一条成功而跳过当前公式的输入法判断。
 
-Do not create PNG or Word versions unless requested. If the user does not specify an output, deliver the editable PPTX and retain one QA preview only in the build directory.
+效率与停止条件：
 
-Keep temporary manifests, formula banks, renders, scripts, and diagnostics outside the final delivery directory. Open or parse each requested final file once and confirm it is nonempty. Do not claim editability when the deck is a full-slide raster image.
+- 一个简单公式的界面写入目标为约 30–90 秒。单条公式超过约 2 分钟仍未进入稳定输入状态时，停止并报告具体阻断，不得持续枚举窗口、修改坐标或切换路线。
+- 同一入口、同一粘贴方式、同一输入法纠正或同一辅助脚本失败一次后，不再重复该失败动作。
+- 已有一个经过保存和重开的非空 `Equation.DSMT4` 后，功能区若失效，只允许复制该 OLE、通过其 OLE 编辑动作替换内容，并对剩余公式固定使用这一条回退路线。
+- COM 和辅助脚本只用于枚举、重命名、等比例定位、边界检查和保存，不得用于假装普通文本已经写入 MathType。
+
+仅当用户要求 MathType 时，完整读取并执行 `references/mathtype-tool.md`；该参考文件中的详细规则不得覆盖上述固定 SOP。
+
+## 最终状态检查闸门
+
+只有全部内容、真实 MathType OLE、图层和局部修复均已写入并保存到唯一权威 PPTX 后，才允许开始最终检查。生成器预览、修复前截图、对象数量、后端布局估算和 PowerPoint 编辑窗口缩略图均不能替代最终保存状态的 PowerPoint 渲染。
+
+从最终保存的 PPTX 渲染全页一次，并从同一最终状态局部放大所有窄标签框、高密度文本、交叉箭头、旋转块状箭头、公式区和粗路径穿过节点区域。高密度区域必须按 100%–200% 视觉尺度检查实际字形边界，不能只看整页缩略图：
+
+- 是否存在任何横排单字行、单个英文 token 行、孤立标点行或项目符号独占行；存在任意一处即为交付阻断项，必须优先修复；
+- 是否存在任何文字与容器边框、框线、箭头、连接线、形状、图标、图片、公式或其他文字的碰撞；逐个高密度文本框按可见字形边界与 3–4 pt 安全距离检查，存在任意一处即为最高优先级交付阻断项；
+- 正文是否保持完整段落，三行及以上是否正确两端对齐；
+- 是否存在溢出、孤行、异常字号或同级格式不一致；
+- 箭头是否逐条存在，头部数量、头部位置、方向和目标是否正确；双头箭头是否被误画为单头箭头或两支单头箭头；
+- 直线是否笔直，曲线是否保持原图弧向和弯曲程度，折线拐点是否对应，且均不穿字；
+- 每条折线和折线箭头是否为且仅为一个 PowerPoint 原生可编辑对象，是否存在分段线、首尾拼接、组合拼接或 `_SEG_` 对象；存在任意一处即不得交付；
+- 是否存在用普通线段替代箭头、用椭圆替代曲线箭头或用通用形状替代特殊轮廓；
+- 每条箭头的源对象、目标对象、中间节点、分支关系和头部所在端是否与源图一致；
+- 每条箭头的源端锚点、目标端锚点、边上偏移位置和拐点是否与源图一致；原图水平/垂直的线段是否仍严格水平/垂直，是否出现无源斜线；
+- 对源图全部水平/垂直箭头形成逐条几何账本，并从最终保存的 PowerPoint 原生对象读取端点验证：水平对象 `|y1-y2| ≤ 0.1 pt`，垂直对象 `|x1-x2| ≤ 0.1 pt`；不得只查看整页渲染或连接器外接框；
+- 连接线和箭头是否位于节点形状之下，节点文字和独立文本框是否位于最上层，是否存在粗路径压住文字；
+- 独立模块是否真实碰撞；
+- 旋转块状箭头、对向箭头和循环箭头之间的交叠是否仅保留源图明确存在的范围，是否侵入相邻循环、文字或无关形状；
+- 页面边距、模块间距、文本内边距和整体视觉重量是否均衡；
+- 参考图中的模块、文字、形状、曲线和箭头是否有漏项、简化、替换或无源新增；
+- PPTX 是否非空，主要对象是否仍可独立编辑。
+
+在工作记录中形成最小审核账本：权威文件路径、最后保存时间、MathType 数量与 `ProgID`、已放大检查的高密度区域、阻断项数量。只有阻断项为 `0` 才允许使用“完成”“已审核”“可交付”等表述。
+
+若最终检查发现问题，只修复影响阅读、方向、结构或可编辑性的对象，最多进行一次局部修复。修复后必须保存，并重新渲染受影响区域；若修改影响全局布局、公式、字号、图层或页面尺寸，则必须重新渲染全页。修复后的重新验证属于最终检查的闭环，不得省略。任何检查后的再次修改都会使审核账本失效，必须按影响范围重新检查。
+
+单字行和孤立 token 始终属于明显问题，不受“最多一次局部修复”或时间目标豁免；轻微色差、亚像素间距、截图压缩和非关键装饰差异不阻断交付。
+
+## 交付
+
+只有通过“最终状态检查闸门”后才交付一个可编辑 PPTX。最终回复简要说明文件、页面尺寸、字体和可编辑性；如有明确限制，只需一句话指出。未形成零阻断审核账本时，不得声称已完成审核。
+
+仅当用户要求 MathType 时，必须完整读取并严格执行：`references/mathtype-tool.md`
