@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper-Fig-Skill"
-  short_description: "Create academic PPT figures with fast SVG skeleton review"
-  default_prompt: "Use $paper-fig-skill as the controlling workflow and follow every applicable gate and hard rule strictly; do not let generic presentation tools or automatic connector behavior override it. For text-based tasks, confirm parameters, quickly generate a low-fidelity SVG layout skeleton for approval, then build the PPT. For reference-image tasks, preserve every visible object and verify horizontal/vertical arrows numerically. Insert requested formulas directly as real MathType OLE objects through the desktop PowerPoint plugin."
+  short_description: "Create editable academic PPT figures with formula support"
+  default_prompt: "Use $paper-fig-skill to confirm parameters, review an SVG skeleton when required, build an editable academic PPT, and delegate every formula to the latest formula-skill for Office-native or MathType insertion."
