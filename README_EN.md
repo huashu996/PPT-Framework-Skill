@@ -4,7 +4,7 @@ English | [中文](README.md)
 
 A Codex skill for creating editable academic framework diagrams in PowerPoint. It can faithfully reconstruct a reference image as an editable PPTX, or design a new technical roadmap, research framework, system architecture, or chapter overview from a paper, Word document, outline, or structured brief.
 
-The goal is not to produce a similar-looking bitmap. The deliverable is a PowerPoint file built from editable native objects: text boxes, shapes, connectors, arrows, images, and real MathType equations.
+The goal is not to produce a similar-looking bitmap. The deliverable is a PowerPoint file built from editable native objects: text boxes, shapes, connectors, arrows, images, and editable Office-native or real MathType equations.
 
 ## Core capabilities
 
@@ -13,7 +13,8 @@ The goal is not to produce a similar-looking bitmap. The deliverable is a PowerP
 - **Native editability**: Do not use a full-slide screenshot as a fake editable result. Text, nodes, logical arrows, and equations remain independently editable.
 - **Strict arrow geometry**: Preserve arrow type, head count, direction, anchors, and route. Every elbow arrow must remain one native PowerPoint object—never a stitched set of line segments.
 - **Text layout constraints**: Keep body text as real paragraphs; prevent arbitrary hard breaks, one-character lines, isolated English tokens, and text collisions.
-- **Real MathType OLE**: Insert `Equation.DSMT4` objects through the visible desktop PowerPoint MathType add-in instead of plain text, web equations, or equation screenshots.
+- **Two equation modes**: Delegate to the latest `formula-skill`, supporting PowerPoint native professional equations and genuine MathType `Equation.DSMT4` objects without substituting one for the other.
+- **Mandatory equation confirmation**: Before recognition or insertion, confirm the equation type, full target PPTX path, and one-page or multi-page layout.
 - **Fast single-slide workflow**: A normal one-slide build targets roughly ten minutes using one build, one local repair, and one final inspection.
 
 ## Demos
@@ -54,11 +55,11 @@ Use this mode for requests such as:
 
 Workflow:
 
-1. Summarize page size, orientation, aspect ratio, font range, and MathType settings.
+1. Summarize page size, orientation, aspect ratio, and font range; when equations are present, also confirm equation type, full PPTX path, and pagination.
 2. Wait for final confirmation of all production parameters.
 3. Record every source object, label, arrow, anchor, layer, and geometric relationship.
 4. Generate one authoritative PPTX.
-5. Insert real MathType OLE objects when requested.
+5. Use the latest `formula-skill` to batch-insert the confirmed editable equation type when needed.
 6. Render the final saved PPTX, repair blocking issues, and deliver only after validation.
 
 The reference image already defines the structure, palette, and content, so the skill does not redundantly ask for a template, color scheme, or content source.
@@ -87,7 +88,7 @@ This mode has two independent approval gates:
 4. Reference reconstruction must not remove, merge, rewrite, or invent modules, text, shapes, curves, or arrows.
 5. Source connections that are horizontal or vertical must remain strictly horizontal or vertical, with the original anchor logic preserved.
 6. When a PPTX path is known, PowerPoint must be launched directly with that absolute path. Do not use screenshots to find an Open dialog and type the path.
-7. Before entering each MathType equation, the editor must pass a visible English `x` test. Any Chinese candidate bar or pre-edit state blocks real equation input.
+7. Delegate all equation recognition and insertion to the latest `formula-skill`; Office mode must produce native equations and MathType mode must produce `Equation.DSMT4`.
 
 See [SKILL.md](SKILL.md) for the complete controlling workflow.
 
@@ -119,14 +120,15 @@ git -C "$HOME\.codex\skills\Paper-framework-skill" pull
 ```text
 $paper-fig-skill Recreate this image as an editable PPT.
 A4 portrait, preserve the original aspect ratio, SimSun 10–14 pt,
-and do not use MathType.
+and the source contains no equations.
 ```
 
 ### Reconstruct an academic figure with equations
 
 ```text
 $paper-fig-skill Recreate this figure in PowerPoint.
-A4 landscape, Times New Roman 10–16 pt, and use MathType for equations.
+A4 landscape, Times New Roman 10–16 pt, use MathType for equations,
+save to C:\output\framework-mathtype.pptx, and keep everything on one slide.
 ```
 
 ### Design a framework from a thesis chapter
@@ -134,8 +136,8 @@ A4 landscape, Times New Roman 10–16 pt, and use MathType for equations.
 ```text
 $paper-fig-skill Create a system framework diagram from Chapter 3
 of the provided Word document. Use the supplied reference image as
-the structural style, A4 portrait, a blue-green palette, and MathType
-for important equations extracted from the text.
+the structural style, A4 portrait, a blue-green palette, Office-native
+equations, C:\output\framework-office.pptx, and a one-slide layout.
 ```
 
 The skill first summarizes all production parameters. For design-from-content tasks, it also presents an SVG skeleton and waits for approval before creating the formal PowerPoint.
@@ -144,11 +146,13 @@ The skill first summarizes all production parameters. For design-from-content ta
 
 - Codex with access to this project's `SKILL.md`
 - Microsoft PowerPoint desktop on Windows
-- For equations: a visible and working MathType add-in in PowerPoint
+- Python 3 and `pywin32` (`python -m pip install -r requirements.txt`)
+- For equations: the latest `formula-skill` installed locally
+- MathType installed and registered as `Equation.DSMT4` only when MathType mode is selected; Office-native mode does not require MathType
 - The Codex presentation runtime and `@oai/artifact-tool`
 - For reference reconstruction: a sufficiently clear PNG or JPG source
 
-MathType is optional for tasks that do not require MathType equations.
+MathType is optional and is used only when the user explicitly selects MathType. Equation recognition and insertion follow the sibling installation's `formula-skill/SKILL.md`.
 
 ## Repository structure
 
@@ -157,19 +161,18 @@ PPT-Framework-Skill/
 ├── SKILL.md
 ├── README.md
 ├── README_EN.md
+├── requirements.txt
 ├── agents/
 │   └── openai.yaml
-├── docs/
+└── docs/
 │   └── images/
 │       ├── demo-faithful-redraw.png
 │       ├── demo-mathtype-architecture.png
 │       ├── demo-from-outline.png
 │       └── demo-complex-cycle-redraw.png
-├── references/
-│   └── mathtype-tool.md
-└── scripts/
-    └── mathtype-ppt.ps1
 ```
+
+Equation handling is no longer duplicated in this repository; it is delegated to the standalone latest `formula-skill`.
 
 ## Design principles
 
