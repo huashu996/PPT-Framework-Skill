@@ -4,7 +4,7 @@
 
 面向 Codex 的可编辑学术框图 PowerPoint 技能。它可以将参考图片忠实复刻为可编辑 PPT，也可以根据论文、Word、提纲或结构说明，从零设计技术路线图、研究框架图、系统框图和章节概览图。
 
-本项目关注的不是“生成一张看起来相似的图片”，而是交付可以在 PowerPoint 中继续修改的原生对象：文本框、形状、连接器、箭头、图片以及真实 MathType 公式。
+本项目关注的不是“生成一张看起来相似的图片”，而是交付可以在 PowerPoint 中继续修改的原生对象：文本框、形状、连接器、箭头、图片以及可编辑的 Office 原生公式或真实 MathType 公式。
 
 ## 核心能力
 
@@ -13,7 +13,8 @@
 - **原生可编辑对象**：不使用整页截图冒充可编辑成果；文本、节点、逻辑箭头和公式均可独立编辑。
 - **严格箭头几何**：保持箭头类型、头部数量、方向、锚点和路径；折线箭头必须是单个 PowerPoint 原生对象，禁止分段拼接。
 - **文字排版约束**：正文保持完整段落；禁止无意义硬换行、横排单字行、孤立英文 token 和文字碰撞。
-- **真实 MathType OLE**：通过桌面 PowerPoint 的 MathType 插件写入 `Equation.DSMT4`，而不是普通文本、网页公式或公式截图。
+- **双公式模式**：统一调用最新 `formula-skill`，支持 PowerPoint 原生专业公式和真正的 MathType `Equation.DSMT4`，不得互相冒充。
+- **公式启动确认**：含公式任务必须先确认公式类型、目标 PPTX 完整路径和一页/多页排版，再开始识别与写入。
 - **快速单页工作流**：普通单页正式制作以约 10 分钟为目标，采用一次构建、一次局部修复、一次最终检查。
 
 ## 演示
@@ -54,11 +55,11 @@
 
 执行流程：
 
-1. 汇总页面尺寸、方向、比例、字体字号和 MathType 参数。
+1. 汇总页面尺寸、方向、比例、字体字号；含公式时同时确认公式类型、目标 PPTX 完整路径和分页形式。
 2. 等待用户最终确认全部参数。
 3. 逐项记录源图中的对象、文本、箭头、锚点、层级和几何。
 4. 一次生成权威 PPTX。
-5. 插入真实 MathType OLE（如需要）。
+5. 调用最新 `formula-skill` 批量插入已确认类型的可编辑公式（如需要）。
 6. 从最终保存的 PPTX 渲染并检查，修复阻断问题后交付。
 
 参考图本身就是结构、配色和内容依据，因此不会重复询问模板、配色或内容来源。
@@ -87,7 +88,7 @@
 4. 参考图任务不得删减、合并、改写或新增源图中的模块、文字、形状、曲线和箭头。
 5. 原图水平或垂直的连接必须保持严格水平或垂直，连接锚点不得自行改变。
 6. 已知 PPTX 路径时必须按绝对路径直接启动；禁止通过截图寻找“打开”窗口并输入路径。
-7. MathType 每条公式输入前必须通过英文 `x` 测试；只要存在中文候选栏或预编辑状态，就禁止输入正式公式。
+7. 所有公式识别与写入必须委托给最新 `formula-skill`；Office 模式必须为原生公式，MathType 模式必须为 `Equation.DSMT4`。
 
 完整规则见 [SKILL.md](SKILL.md)。
 
@@ -118,14 +119,15 @@ git -C "$HOME\.codex\skills\Paper-framework-skill" pull
 
 ```text
 $paper-fig-skill 根据这张图生成可编辑 PPT。
-A4 纵向，保持原比例，宋体 10–14 pt，不使用 MathType。
+A4 纵向，保持原比例，宋体 10–14 pt，图中无公式。
 ```
 
 ### 含公式的学术框图
 
 ```text
 $paper-fig-skill 复刻此图为 PPT。
-A4 横向，Times New Roman 10–16 pt，公式使用 MathType。
+A4 横向，Times New Roman 10–16 pt，公式使用 MathType；
+保存到 C:\output\framework-mathtype.pptx，全部放在一页。
 ```
 
 ### 根据论文内容从零设计
@@ -133,7 +135,7 @@ A4 横向，Times New Roman 10–16 pt，公式使用 MathType。
 ```text
 $paper-fig-skill 根据 Word 第三章制作系统框架图。
 使用提供的参考图作为结构风格，A4 纵向，蓝绿色配色，
-提取重要公式并使用 MathType。
+提取重要公式并使用 Office 原生公式；保存到 C:\output\framework-office.pptx，全部放在一页。
 ```
 
 技能会先汇总全部制作参数。对从零设计任务，还会先提交 SVG 骨架，只有用户确认后才生成正式 PPT。
@@ -142,11 +144,13 @@ $paper-fig-skill 根据 Word 第三章制作系统框架图。
 
 - Codex，且能够加载本项目的 `SKILL.md`
 - Windows 桌面版 Microsoft PowerPoint
-- 需要公式时：PowerPoint 中可见并可用的 MathType 插件
+- Python 3 与 `pywin32`（`python -m pip install -r requirements.txt`）
+- 需要公式时：已安装最新 `formula-skill`
+- 仅 MathType 模式需要本机安装并注册 `Equation.DSMT4`；Office 原生模式不需要 MathType
 - 用于生成 PPT 的 Codex 演示文稿运行时与 `@oai/artifact-tool`
 - 参考图复刻时：清晰的 PNG/JPG 图片
 
-MathType 不是所有任务的必需依赖；只有用户明确要求 MathType 时才启用对应工作流。
+MathType 不是所有任务的必需依赖；只有用户明确选择 MathType 时才启用。公式识别与写入规则以同级安装的 `formula-skill/SKILL.md` 为准。
 
 ## 项目结构
 
@@ -155,19 +159,18 @@ PPT-Framework-Skill/
 ├── SKILL.md
 ├── README.md
 ├── README_EN.md
+├── requirements.txt
 ├── agents/
 │   └── openai.yaml
-├── docs/
+└── docs/
 │   └── images/
 │       ├── demo-faithful-redraw.png
 │       ├── demo-mathtype-architecture.png
 │       ├── demo-from-outline.png
 │       └── demo-complex-cycle-redraw.png
-├── references/
-│   └── mathtype-tool.md
-└── scripts/
-    └── mathtype-ppt.ps1
 ```
+
+公式功能不再在本仓库重复实现，统一依赖独立的最新 `formula-skill`。
 
 ## 设计原则
 
