@@ -43,6 +43,12 @@
 
 ![复杂循环与多分区研究框架复刻](docs/images/demo-complex-cycle-redraw.png)
 
+### 5. 双时间更新与量测矫正框图对照复刻
+
+上半部分为参考图，下半部分为最终可编辑 PowerPoint 复刻结果。该示例展示了对称双分支、高密度公式标注、跨区域折线、严格水平/垂直锚点连接、分区虚线框以及真实 MathType 公式的协同处理。
+
+![双时间更新与量测矫正框图：参考图与可编辑复刻结果对照](docs/images/demo-mathtype-dual-update-comparison.png)
+
 ## 两种工作模式
 
 ### 模式 A：参考图忠实复刻
@@ -167,7 +173,8 @@ PPT-Framework-Skill/
 │       ├── demo-faithful-redraw.png
 │       ├── demo-mathtype-architecture.png
 │       ├── demo-from-outline.png
-│       └── demo-complex-cycle-redraw.png
+│       ├── demo-complex-cycle-redraw.png
+│       └── demo-mathtype-dual-update-comparison.png
 ```
 
 公式功能不再在本仓库重复实现，统一依赖独立的最新 `formula-skill`。
