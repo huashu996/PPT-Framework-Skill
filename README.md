@@ -13,7 +13,7 @@
 - **原生可编辑对象**：不使用整页截图冒充可编辑成果；文本、节点、逻辑箭头和公式均可独立编辑。
 - **严格箭头几何**：保持箭头类型、头部数量、方向、锚点和路径；折线箭头必须是单个 PowerPoint 原生对象，禁止分段拼接。
 - **文字排版约束**：正文保持完整段落；禁止无意义硬换行、横排单字行、孤立英文 token 和文字碰撞。
-- **双公式模式**：统一调用最新 `formula-skill`，支持 PowerPoint 原生专业公式和真正的 MathType `Equation.DSMT4`，不得互相冒充。
+- **双公式模式**：使用本仓库内置流水线，支持 PowerPoint 原生专业公式和真正的 MathType `Equation.DSMT4`，不得互相冒充。
 - **公式启动确认**：含公式任务必须先确认公式类型、目标 PPTX 完整路径和一页/多页排版，再开始识别与写入。
 - **快速单页工作流**：普通单页正式制作以约 10 分钟为目标，采用一次构建、一次局部修复、一次最终检查。
 
@@ -65,7 +65,7 @@
 2. 等待用户最终确认全部参数。
 3. 逐项记录源图中的对象、文本、箭头、锚点、层级和几何。
 4. 一次生成权威 PPTX。
-5. 调用最新 `formula-skill` 批量插入已确认类型的可编辑公式（如需要）。
+5. 使用内置流水线批量插入已确认类型的可编辑公式（如需要）。
 6. 从最终保存的 PPTX 渲染并检查，修复阻断问题后交付。
 
 参考图本身就是结构、配色和内容依据，因此不会重复询问模板、配色或内容来源。
@@ -94,7 +94,7 @@
 4. 参考图任务不得删减、合并、改写或新增源图中的模块、文字、形状、曲线和箭头。
 5. 原图水平或垂直的连接必须保持严格水平或垂直，连接锚点不得自行改变。
 6. 已知 PPTX 路径时必须按绝对路径直接启动；禁止通过截图寻找“打开”窗口并输入路径。
-7. 所有公式识别与写入必须委托给最新 `formula-skill`；Office 模式必须为原生公式，MathType 模式必须为 `Equation.DSMT4`。
+7. 所有公式识别与写入必须使用本 skill 的内置脚本；Office 模式必须为原生公式，MathType 模式必须为 `Equation.DSMT4`。
 
 完整规则见 [SKILL.md](SKILL.md)。
 
@@ -150,13 +150,12 @@ $paper-fig-skill 根据 Word 第三章制作系统框架图。
 
 - Codex，且能够加载本项目的 `SKILL.md`
 - Windows 桌面版 Microsoft PowerPoint
-- Python 3 与 `pywin32`（`python -m pip install -r requirements.txt`）
-- 需要公式时：已安装最新 `formula-skill`
+- Python 3 与 `requirements.txt` 中的依赖（`python -m pip install -r requirements.txt`）
 - 仅 MathType 模式需要本机安装并注册 `Equation.DSMT4`；Office 原生模式不需要 MathType
 - 用于生成 PPT 的 Codex 演示文稿运行时与 `@oai/artifact-tool`
 - 参考图复刻时：清晰的 PNG/JPG 图片
 
-MathType 不是所有任务的必需依赖；只有用户明确选择 MathType 时才启用。公式识别与写入规则以同级安装的 `formula-skill/SKILL.md` 为准。
+MathType 不是所有任务的必需依赖；只有用户明确选择 MathType 时才启用。公式识别、清单生成与写入均由本仓库 `scripts/` 内的流水线完成。
 
 ## 项目结构
 
@@ -168,6 +167,11 @@ PPT-Framework-Skill/
 ├── requirements.txt
 ├── agents/
 │   └── openai.yaml
+├── scripts/
+│   ├── build_office_manifest.py
+│   ├── build_mathtype_manifest.py
+│   ├── run_office_pipeline.ps1
+│   └── run_mathtype_pipeline_sta.ps1
 └── docs/
 │   └── images/
 │       ├── demo-faithful-redraw.png
@@ -177,7 +181,7 @@ PPT-Framework-Skill/
 │       └── demo-mathtype-dual-update-comparison.png
 ```
 
-公式功能不再在本仓库重复实现，统一依赖独立的最新 `formula-skill`。
+公式功能已内置于本仓库，不需要读取或调用其他公式 skill。
 
 ## 设计原则
 

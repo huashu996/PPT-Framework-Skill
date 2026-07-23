@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper-Fig-Skill"
   short_description: "Create editable academic PPT figures with formula support"
-  default_prompt: "Use $paper-fig-skill to confirm parameters, review an SVG skeleton when required, build an editable academic PPT, and delegate every formula to the latest formula-skill for Office-native or MathType insertion."
+  default_prompt: "Use $paper-fig-skill to confirm parameters, review an SVG skeleton when required, build an editable academic PPT, and insert Office-native or MathType equations with its bundled formula pipeline."

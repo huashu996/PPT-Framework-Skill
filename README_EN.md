@@ -13,7 +13,7 @@ The goal is not to produce a similar-looking bitmap. The deliverable is a PowerP
 - **Native editability**: Do not use a full-slide screenshot as a fake editable result. Text, nodes, logical arrows, and equations remain independently editable.
 - **Strict arrow geometry**: Preserve arrow type, head count, direction, anchors, and route. Every elbow arrow must remain one native PowerPoint object—never a stitched set of line segments.
 - **Text layout constraints**: Keep body text as real paragraphs; prevent arbitrary hard breaks, one-character lines, isolated English tokens, and text collisions.
-- **Two equation modes**: Delegate to the latest `formula-skill`, supporting PowerPoint native professional equations and genuine MathType `Equation.DSMT4` objects without substituting one for the other.
+- **Two equation modes**: Use the bundled pipeline for PowerPoint native professional equations and genuine MathType `Equation.DSMT4` objects without substituting one for the other.
 - **Mandatory equation confirmation**: Before recognition or insertion, confirm the equation type, full target PPTX path, and one-page or multi-page layout.
 - **Fast single-slide workflow**: A normal one-slide build targets roughly ten minutes using one build, one local repair, and one final inspection.
 
@@ -59,7 +59,7 @@ Workflow:
 2. Wait for final confirmation of all production parameters.
 3. Record every source object, label, arrow, anchor, layer, and geometric relationship.
 4. Generate one authoritative PPTX.
-5. Use the latest `formula-skill` to batch-insert the confirmed editable equation type when needed.
+5. Use the bundled pipeline to batch-insert the confirmed editable equation type when needed.
 6. Render the final saved PPTX, repair blocking issues, and deliver only after validation.
 
 The reference image already defines the structure, palette, and content, so the skill does not redundantly ask for a template, color scheme, or content source.
@@ -88,7 +88,7 @@ This mode has two independent approval gates:
 4. Reference reconstruction must not remove, merge, rewrite, or invent modules, text, shapes, curves, or arrows.
 5. Source connections that are horizontal or vertical must remain strictly horizontal or vertical, with the original anchor logic preserved.
 6. When a PPTX path is known, PowerPoint must be launched directly with that absolute path. Do not use screenshots to find an Open dialog and type the path.
-7. Delegate all equation recognition and insertion to the latest `formula-skill`; Office mode must produce native equations and MathType mode must produce `Equation.DSMT4`.
+7. Use this skill's bundled scripts for all equation recognition and insertion; Office mode must produce native equations and MathType mode must produce `Equation.DSMT4`.
 
 See [SKILL.md](SKILL.md) for the complete controlling workflow.
 
@@ -146,13 +146,12 @@ The skill first summarizes all production parameters. For design-from-content ta
 
 - Codex with access to this project's `SKILL.md`
 - Microsoft PowerPoint desktop on Windows
-- Python 3 and `pywin32` (`python -m pip install -r requirements.txt`)
-- For equations: the latest `formula-skill` installed locally
+- Python 3 and the dependencies in `requirements.txt` (`python -m pip install -r requirements.txt`)
 - MathType installed and registered as `Equation.DSMT4` only when MathType mode is selected; Office-native mode does not require MathType
 - The Codex presentation runtime and `@oai/artifact-tool`
 - For reference reconstruction: a sufficiently clear PNG or JPG source
 
-MathType is optional and is used only when the user explicitly selects MathType. Equation recognition and insertion follow the sibling installation's `formula-skill/SKILL.md`.
+MathType is optional and is used only when the user explicitly selects MathType. Equation recognition, manifest generation, and insertion all use the bundled scripts in this repository.
 
 ## Repository structure
 
@@ -164,6 +163,11 @@ PPT-Framework-Skill/
 ├── requirements.txt
 ├── agents/
 │   └── openai.yaml
+├── scripts/
+│   ├── build_office_manifest.py
+│   ├── build_mathtype_manifest.py
+│   ├── run_office_pipeline.ps1
+│   └── run_mathtype_pipeline_sta.ps1
 └── docs/
 │   └── images/
 │       ├── demo-faithful-redraw.png
@@ -172,7 +176,7 @@ PPT-Framework-Skill/
 │       └── demo-complex-cycle-redraw.png
 ```
 
-Equation handling is no longer duplicated in this repository; it is delegated to the standalone latest `formula-skill`.
+Equation handling is bundled in this repository and does not read or invoke another equation skill.
 
 ## Design principles
 
